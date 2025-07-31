@@ -1,10 +1,26 @@
+using Microsoft.EntityFrameworkCore;
+using Songdle.Infrastructure.Data;
 using Songdle.Presentation.Components;
+using DotNetEnv;
+
+Env.Load();
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+string connectionString = $"server={Environment.GetEnvironmentVariable("DB_HOST")};" +
+                          $"port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                          $"database={Environment.GetEnvironmentVariable("DB_NAME")};" +
+                          $"uid={Environment.GetEnvironmentVariable("DB_USER")};" +
+                          $"password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddDbContext<AppDbContext>(options => 
+options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 42))));
 
 var app = builder.Build();
 

@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Songdle.Application\Songdle.Application.csproj" />
     <ProjectReference Include="..\Songdle.Domain\Songdle.Domain.csproj" />
-    <ProjectReference Include="..\Songdle.Presentation\Songdle.Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +17,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-rc.1.efcore.9.0.0" />
   </ItemGroup>
 
 </Project>
