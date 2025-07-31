@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Songdle.Application\Songdle.Application.csproj" />
     <ProjectReference Include="..\Songdle.Infrastructure\Songdle.Infrastructure.csproj" />
   </ItemGroup>
 

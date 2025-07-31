@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Songdle.Infrastructure.Data;
+
 using Songdle.Presentation.Components;
 using DotNetEnv;
+using Songdle.Domain.Interfaces;
 
 Env.Load();
 
@@ -19,8 +21,10 @@ string connectionString = $"server={Environment.GetEnvironmentVariable("DB_HOST"
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddDbContext<AppDbContext>(options => 
+builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 42))));
+
+builder.Services.AddScoped<ISongRepository, SongRepository>();
 
 var app = builder.Build();
 
@@ -40,5 +44,8 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+
+
 
 app.Run();
