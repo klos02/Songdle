@@ -4,6 +4,7 @@ using Songdle.Infrastructure.Data;
 using Songdle.Presentation.Components;
 using DotNetEnv;
 using Songdle.Domain.Interfaces;
+using Songdle.Infrastructure.Repositories;
 
 Env.Load();
 
@@ -25,6 +26,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 42))));
 
 builder.Services.AddScoped<ISongRepository, SongRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
