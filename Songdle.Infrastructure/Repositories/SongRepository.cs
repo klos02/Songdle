@@ -22,4 +22,13 @@ public class SongRepository(AppDbContext context) : ISongRepository
     {
         return await context.Songs.FirstOrDefaultAsync(s => s.Id == id);
     }
+    public async Task DeleteSongAsync(int id)
+    {
+        var song = await GetSongByIdAsync(id);
+        if (song != null)
+        {
+            context.Songs.Remove(song);
+        }
+    }
+
 }

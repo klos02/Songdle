@@ -1,9 +1,9 @@
 using System;
 using Songdle.Domain.Entities;
 
-namespace Songdle.Domain.Interfaces;
+namespace Songdle.Application.Interfaces;
 
-public interface ISongRepository
+public interface ISongHandler
 {
     Task<Song?> GetSongByIdAsync(int id);
     Task<IEnumerable<Song>> GetAllSongsAsync();
