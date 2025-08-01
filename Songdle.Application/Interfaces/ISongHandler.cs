@@ -1,4 +1,5 @@
 using System;
+using Songdle.Application.DTOs;
 using Songdle.Domain.Entities;
 
 namespace Songdle.Application.Interfaces;
@@ -7,6 +8,8 @@ public interface ISongHandler
 {
     Task<Song?> GetSongByIdAsync(int id);
     Task<IEnumerable<Song>> GetAllSongsAsync();
+    Task<Song?> GetSongByTitleAsync(string title);
+    Task<IEnumerable<Song>> SearchSongsByTitleAsync(string partialTitle);
     Task AddSongAsync(Song song);
     Task DeleteSongAsync(int id);
 }

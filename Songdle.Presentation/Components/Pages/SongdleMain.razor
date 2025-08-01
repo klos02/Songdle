@@ -9,15 +9,25 @@
 <div class="container mt-5">
     <h2 class="text-center mb-4">🎵 Songdle</h2>
 
-    <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Zgadnij tytuł piosenki..." @bind="guess" />
-        <button class="btn btn-success" type="submit" @onclick="SubmitGuess">Zgaduję</button>
+    <div class="position-relative">
+        <input type="text" class="form-control" placeholder="Wpisz tytuł piosenki..." 
+               @bind="guessInput" @oninput="OnInputChanged" />
+
+        @if (suggestions.Any())
+        {
+            <ul class="list-group position-absolute w-100 z-3 shadow" style="max-height: 200px; overflow-y: auto;">
+                @foreach (var suggestion in suggestions)
+                {
+                    <li class="list-group-item list-group-item-action" 
+                        @onclick="() => SelectSuggestion(suggestion)">
+                        @suggestion.Title
+                    </li>
+                }
+            </ul>
+        }
     </div>
 
-    @if (isLoading)
-    {
-        <div class="alert alert-info">Ładowanie...</div>
-    }
+    <button class="btn btn-success mt-3" @onclick="SubmitGuess" disabled="@(!isSongSelected)">Zgaduję</button>
 
     @if (guessResults.Any())
     {
@@ -31,7 +41,7 @@
                     <th>Rok</th>
                     <th>Kraj</th>
                     <th>Gatunek</th>
-                    <th>Fragment tekstu</th>
+                    <th>Featy</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,7 +54,7 @@
                         <td>@result.ReleaseDate.Year</td>
                         <td>@result.Country</td>
                         <td>@result.Genre</td>
-                        <td>@result.LyricsFragment</td>
+                        <td>@string.Join(", ", result.Feats)</td>
                     </tr>
                 }
             </tbody>
@@ -57,56 +67,51 @@
             🎉 Gratulacje! Odgadłeś piosenkę!
         </div>
     }
-
 </div>
 
 @code {
-    private string guess = "";
-    private bool isCorrect = false;
-    private bool isLoading = false;
+    private string guessInput = "";
+    private SongDto? selectedSong = null;
+    private List<SongDto> suggestions = new();
     private List<SongDto> guessResults = new();
+    private bool isCorrect = false;
 
-    private async Task SubmitGuess()
+    private bool isSongSelected => selectedSong != null;
+
+     private async Task OnInputChanged(ChangeEventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(guess))
-            return;
+        guessInput = e.Value?.ToString() ?? "";
+        selectedSong = null;
 
-        isLoading = true;
+        if (guessInput.Length >= 2)
+        {
+            suggestions = (await SongProcessingService.SearchSongsByTitleAsync(guessInput)).ToList();
+        }
+        else
+        {
+            suggestions.Clear();
+        }
+    }
 
-        try
-        {
-            // TODO: zamień na realne pobieranie i porównywanie piosenki
-            SongDto song = null; //await SongProcessingService.GetSongByTitleAsync(guess);
+    private void SelectSuggestion(SongDto song)
+    {
+        selectedSong = song;
+        guessInput = song.Title;
+        suggestions.Clear();
+    }
 
-            if (song is not null)
-            {
-                guessResults.Add(song);
-                isCorrect = true;
-            }
-            else
-            {
-                // placeholder
-                var dummy = new SongDto
-                {
-                    Title = guess,
-                    Artist = "???",
-                    Album = "???",
-                    Country = "???",
-                    Genre = "???",
-                    ReleaseDate = new DateTime(2020, 1, 1),
-                    LyricsFragment = "???"
-                };
-                guessResults.Add(dummy);
-            }
-        }
-        catch (Exception ex)
+   private Task SubmitGuess()
+    {
+        if (selectedSong is not null)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            guessResults.Add(selectedSong);
+            isCorrect = true; // lub: porównanie z ukrytą piosenką
         }
-        finally
-        {
-            isLoading = false;
-            guess = "";
-        }
+
+        guessInput = "";
+        selectedSong = null;
+
+        return Task.CompletedTask;
+    }
     }
 }

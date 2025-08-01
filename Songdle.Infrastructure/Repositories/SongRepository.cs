@@ -31,4 +31,23 @@ public class SongRepository(AppDbContext context) : ISongRepository
         }
     }
 
+    public async Task<Song?> GetSongByTitleAsync(string title)
+    {
+        return await context.Songs.FirstOrDefaultAsync(s => s.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public async Task<IEnumerable<Song>> SearchSongsByTitleAsync(string partialTitle)
+    {
+        if (string.IsNullOrWhiteSpace(partialTitle))
+        {
+            throw new ArgumentException("Partial title cannot be null or empty.", nameof(partialTitle));
+        }
+
+        return await context.Songs
+           .Where(s => s.Title.ToLower().Contains(partialTitle.ToLower()))
+           .OrderBy(s => s.Title)
+           .Take(10)
+           .ToListAsync();
+
+    }
 }

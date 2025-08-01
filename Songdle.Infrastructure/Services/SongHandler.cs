@@ -1,4 +1,5 @@
 using System;
+using Songdle.Application.DTOs;
 using Songdle.Application.Interfaces;
 using Songdle.Domain.Entities;
 using Songdle.Domain.Interfaces;
@@ -14,7 +15,7 @@ public class SongHandler(ISongRepository songRepository, IUnitOfWork unitOfWork)
         await songRepository.AddSongAsync(song);
 
         await unitOfWork.SaveChangesAsync();
-            
+
     }
 
     public async Task DeleteSongAsync(int id)
@@ -29,7 +30,19 @@ public class SongHandler(ISongRepository songRepository, IUnitOfWork unitOfWork)
 
     public Task<Song?> GetSongByIdAsync(int id)
     {
-        return songRepository.GetSongByIdAsync(id) 
+        return songRepository.GetSongByIdAsync(id)
             ?? throw new KeyNotFoundException($"Song with ID {id} not found.");
+    }
+
+    public async Task<Song?> GetSongByTitleAsync(string title)
+    {
+        ArgumentNullException.ThrowIfNull(title);
+
+        return await songRepository.GetSongByTitleAsync(title);
+    }
+
+    public async Task<IEnumerable<Song>> SearchSongsByTitleAsync(string partialTitle)
+    {
+        return await songRepository.SearchSongsByTitleAsync(partialTitle);
     }
 }
