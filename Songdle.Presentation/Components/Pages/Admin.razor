@@ -4,6 +4,7 @@
 
 @rendermode InteractiveServer
 @inject ISongProcessingService SongProcessingService
+@inject ITodaysGameProcessingService TodaysGameProcessingService
 
 <PageTitle>Admin Panel</PageTitle>
 
@@ -20,7 +21,7 @@
         <ul>
             @foreach (var song in songs)
             {
-                <li>@song.Title - @song.Artist - @song.Album</li>
+                <li>@song.Title - @song.Artist - @song.Album  <button class="btn btn-secondary" @onclick="() => SetTodaysGame(song.Id)" >Ustaw jako dzisiejszą</button> </li>
             }
         </ul>
     }
@@ -51,6 +52,23 @@
             isLoading = false;
         }
 
+    }
+
+    private async Task SetTodaysGame(int songId)
+    {
+        try
+        {
+            isLoading = true;
+            await TodaysGameProcessingService.SetTodaysGameAsync(DateTime.UtcNow.Date, songId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error setting today's game: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
     }
 
 

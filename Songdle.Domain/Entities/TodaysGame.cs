@@ -7,4 +7,5 @@ public class TodaysGame
     public int Id { get; set; }
     public DateTime Date { get; set; }
     public Song? SongOfTheDay { get; set; }
+    public int SongOfTheDayId { get; set; } 
 }

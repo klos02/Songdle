@@ -33,8 +33,8 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITodaysGameRepository, TodaysGameRepository>();
 builder.Services.AddScoped<ISongHandler, SongHandler>();
 builder.Services.AddScoped<ISongProcessingService, SongProcessingService>();
-
-//builder.Services.AddScoped<ITodaysGameHandler, TodaysGameHandler>();
+builder.Services.AddScoped<ITodaysGameProcessingService, TodaysGameProcessingService>();
+builder.Services.AddScoped<ITodaysGameHandler, TodaysGameHandler>();
 
 
 var app = builder.Build();
