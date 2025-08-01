@@ -2,6 +2,7 @@
 @using Songdle.Application.DTOs
 @using Songdle.Application.Interfaces
 @inject ISongProcessingService SongProcessingService
+@inject ITodaysGameProcessingService TodaysGameProcessingService
 
 @rendermode InteractiveServer
 <PageTitle>Songdle</PageTitle>
@@ -20,7 +21,7 @@
                 {
                     <li class="list-group-item list-group-item-action" 
                         @onclick="() => SelectSuggestion(suggestion)">
-                        @suggestion.Title
+                        @suggestion.Artist - @suggestion.Title
                     </li>
                 }
             </ul>
@@ -45,9 +46,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var result in guessResults)
+                @foreach (var result in guessResults.AsEnumerable().Reverse())
                 {
                     <tr>
+                        
                         <td>@result.Title</td>
                         <td>@result.Artist</td>
                         <td>@result.Album</td>
@@ -74,9 +76,33 @@
     private SongDto? selectedSong = null;
     private List<SongDto> suggestions = new();
     private List<SongDto> guessResults = new();
+    private TodaysGameDto todaysGame;
     private bool isCorrect = false;
+    private bool isLoadingGame = false;
 
     private bool isSongSelected => selectedSong != null;
+
+     protected override async Task OnInitializedAsync()
+    {
+        await GetTodaysGame();
+    }
+
+     private async Task GetTodaysGame()
+    {
+        try
+        {
+            isLoadingGame = true;
+            todaysGame = await TodaysGameProcessingService.GetTodaysGameAsync(DateTime.UtcNow.Date);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Błąd podczas pobierania dzisiejszej gry: {ex.Message}");
+        }
+        finally
+        {
+            isLoadingGame = false;
+        }
+    }
 
      private async Task OnInputChanged(ChangeEventArgs e)
     {
@@ -105,7 +131,9 @@
         if (selectedSong is not null)
         {
             guessResults.Add(selectedSong);
-            isCorrect = true; // lub: porównanie z ukrytą piosenką
+            isCorrect = selectedSong.Id == todaysGame.SongOfTheDayId;
+            //Console.WriteLine($"Zgadnięto piosenkę: {selectedSong.Title} - Poprawność: {isCorrect}");
+            //Console.WriteLine($"Dzisiejsza piosenka: {todaysGame.SongOfTheDay?.Title} (ID: {todaysGame.SongOfTheDayId})");
         }
 
         guessInput = "";
@@ -114,4 +142,4 @@
         return Task.CompletedTask;
     }
     }
-}
+

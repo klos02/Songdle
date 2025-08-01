@@ -16,6 +16,7 @@ public class TodaysGameProcessingService(ITodaysGameHandler todaysGameHandler, I
             {
                 Id = game.Id,
                 Date = game.Date,
+                SongOfTheDayId = game.SongOfTheDayId,
                 SongOfTheDay = game.SongOfTheDay != null ? new SongDto
                 {
                     Id = game.SongOfTheDay.Id,

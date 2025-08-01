@@ -22,10 +22,10 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
             Country = song.Country,
             ImageUrl = song.ImageUrl,
             AudioPreviewUrl = song.AudioPreviewUrl,
-            Feats = song.Feats ?? [] 
-            
+            Feats = song.Feats ?? []
+
         });
-        
+
     }
 
     public async Task<SongDto?> GetSongByIdAsync(int id)
@@ -56,7 +56,7 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
         {
             return null;
         }
-            
+
     }
 
     public async Task<SongDto?> GetSongByTitleAsync(string title)
@@ -64,26 +64,26 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
         ArgumentNullException.ThrowIfNull(title);
 
         var song = await songHandler.GetSongByTitleAsync(title);
-                     
-                if (song == null)
-                {
-                    return null;
-                }
-                return new SongDto
-                {
-                    Id = song.Id,
-                    Title = song.Title,
-                    Artist = song.Artist,
-                    Album = song.Album,
-                    Genre = song.Genre,
-                    ReleaseDate = song.ReleaseDate,
-                    LyricsFragment = song.LyricsFragment,
-                    Country = song.Country,
-                    ImageUrl = song.ImageUrl,
-                    AudioPreviewUrl = song.AudioPreviewUrl,
-                    Feats = song.Feats ?? []
-                };
-           
+
+        if (song == null)
+        {
+            return null;
+        }
+        return new SongDto
+        {
+            Id = song.Id,
+            Title = song.Title,
+            Artist = song.Artist,
+            Album = song.Album,
+            Genre = song.Genre,
+            ReleaseDate = song.ReleaseDate,
+            LyricsFragment = song.LyricsFragment,
+            Country = song.Country,
+            ImageUrl = song.ImageUrl,
+            AudioPreviewUrl = song.AudioPreviewUrl,
+            Feats = song.Feats ?? []
+        };
+
     }
 
     public async Task<IEnumerable<SongDto>> SearchSongsByTitleAsync(string partialTitle)
@@ -91,6 +91,8 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
         ArgumentNullException.ThrowIfNull(partialTitle);
 
         var songs = await songHandler.SearchSongsByTitleAsync(partialTitle);
+
+
         return songs.Select(song => new SongDto
         {
             Id = song.Id,
@@ -105,5 +107,7 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
             AudioPreviewUrl = song.AudioPreviewUrl,
             Feats = song.Feats ?? []
         });
+        
+        
     }
 }
