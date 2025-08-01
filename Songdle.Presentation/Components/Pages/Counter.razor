@@ -1,19 +1,46 @@
 ﻿@page "/counter"
+@using Songdle.Application.DTOs
+@using Songdle.Application.Interfaces
+@using Songdle.Infrastructure.Data
 @rendermode InteractiveServer
+@inject ISongProcessingService SongProcessingService
+@inject AppDbContext context 
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Admin Panel</PageTitle>
 
-<h1>Counter</h1>
+<button class="btn btn-primary" @onclick="GetSongs">GetSongs</button>
 
-<p role="status">Current count: @currentCount</p>
+<button class="btn btn-secondary" @onclick="SeedSongs">[DEBUG] SEED songs [DEBUG]</button>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+@if (songs.Any())
+{
+    <ul>
+        @foreach (var song in songs)
+        {
+            <li>@song.Title</li>
+            <li>@song.Artist</li>
+            <li>@song.Album</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No songs available.</p>
+}
 
 @code {
-    private int currentCount = 0;
+    private IEnumerable<SongDto> songs = new List<SongDto>();
+    
 
-    private void IncrementCount()
+    private async void GetSongs()
     {
-        currentCount++;
+        songs = await SongProcessingService.GetAllSongsAsync();
+    }
+
+    private async void SeedSongs(){
+        await SongSeeder.SeedAsync(context);
     }
 }
+
+
+

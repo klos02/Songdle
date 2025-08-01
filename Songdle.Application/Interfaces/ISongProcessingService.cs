@@ -1,11 +1,13 @@
 using System;
+using Songdle.Application.DTOs;
 using Songdle.Domain.Entities;
 
 namespace Songdle.Application.Interfaces;
 
 public interface ISongProcessingService
 {
+
+    Task<SongDto?> GetSongByIdAsync(int id);
+    Task<IEnumerable<SongDto>> GetAllSongsAsync();
     
-    Task<Song> GetSongByIdAsync(int id);
-    Task<IEnumerable<Song>> GetAllSongsAsync();
 }

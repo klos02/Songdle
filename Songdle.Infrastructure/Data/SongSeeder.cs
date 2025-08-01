@@ -1,15 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Songdle.Domain.Entities; 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 
 namespace Songdle.Infrastructure.Data;
 public static class SongSeeder
 {
-    public static async Task SeedAsync(DbContext context)
+    public static async Task SeedAsync(AppDbContext context)
     {
-        if (context.Set<Song>().Any())
+        if (context.Songs.Any())
             return;
 
         var songs = new List<Song>
@@ -17,7 +15,7 @@ public static class SongSeeder
             new() {
                 Title = "Pop Out",
                 Artist = "Playboi Carti",
-                Feats = new List<string>(),
+                Feats = [],
                 Album = "I Am Music",
                 ReleaseDate = new DateTime(2025, 3, 14),
                 Genre = "Hip-Hop/Rap",
@@ -27,7 +25,7 @@ public static class SongSeeder
             new() {
                 Title = "Crush",
                 Artist = "Playboi Carti",
-                Feats = new List<string> { "Travis Scott" },
+                Feats = ["Travis Scott"],
                 Album = "I Am Music",
                 ReleaseDate = new DateTime(2025, 3, 14),
                 Genre = "Hip-Hop/Rap",
@@ -37,7 +35,7 @@ public static class SongSeeder
 
         };
 
-        await context.Set<Song>().AddRangeAsync(songs);
+        await context.Songs.AddRangeAsync(songs);
         await context.SaveChangesAsync();
     }
 }

@@ -5,6 +5,9 @@ using Songdle.Presentation.Components;
 using DotNetEnv;
 using Songdle.Domain.Interfaces;
 using Songdle.Infrastructure.Repositories;
+using Songdle.Application.Interfaces;
+using Songdle.Infrastructure.Services;
+using Songdle.Application.Services;
 
 Env.Load();
 
@@ -27,6 +30,12 @@ options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 42))
 
 builder.Services.AddScoped<ISongRepository, SongRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITodaysGameRepository, TodaysGameRepository>();
+builder.Services.AddScoped<ISongHandler, SongHandler>();
+builder.Services.AddScoped<ISongProcessingService, SongProcessingService>();
+
+//builder.Services.AddScoped<ITodaysGameHandler, TodaysGameHandler>();
+
 
 var app = builder.Build();
 
