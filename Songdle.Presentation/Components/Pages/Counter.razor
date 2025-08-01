@@ -1,46 +1,57 @@
 ﻿@page "/counter"
 @using Songdle.Application.DTOs
 @using Songdle.Application.Interfaces
-@using Songdle.Infrastructure.Data
+
 @rendermode InteractiveServer
 @inject ISongProcessingService SongProcessingService
-@inject AppDbContext context 
 
 <PageTitle>Admin Panel</PageTitle>
 
 <button class="btn btn-primary" @onclick="GetSongs">GetSongs</button>
 
-<button class="btn btn-secondary" @onclick="SeedSongs">[DEBUG] SEED songs [DEBUG]</button>
+@if (isLoading)
+{
+    <p>Loading songs...</p>
+}
 
-@if (songs.Any())
-{
-    <ul>
-        @foreach (var song in songs)
-        {
-            <li>@song.Title</li>
-            <li>@song.Artist</li>
-            <li>@song.Album</li>
-        }
-    </ul>
-}
-else
-{
-    <p>No songs available.</p>
-}
+
+@if (songs != null && songs.Any())
+    {
+        <ul>
+            @foreach (var song in songs)
+            {
+                <li>@song.Title - @song.Artist - @song.Album</li>
+            }
+        </ul>
+    }
+
+
+
+
 
 @code {
     private IEnumerable<SongDto> songs = new List<SongDto>();
-    
+    private bool isLoading = false;
 
-    private async void GetSongs()
+
+    private async Task GetSongs()
     {
-        songs = await SongProcessingService.GetAllSongsAsync();
+        try
+        {
+            isLoading = true;
+            songs = await SongProcessingService.GetAllSongsAsync();
+        }
+        catch (Exception ex)
+        {
+
+            Console.WriteLine($"Error fetching songs: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+
     }
 
-    private async void SeedSongs(){
-        await SongSeeder.SeedAsync(context);
-    }
+
 }
-
-
-
