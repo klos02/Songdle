@@ -11,7 +11,7 @@ public class SongDto
     public string Album { get; set; }
     public DateTime ReleaseDate { get; set; }
     public string Genre { get; set; }
-    public string LyricsFragment { get; set; } = null!;
+    public string? LyricsFragment { get; set; } = null!;
     public string Country { get; set; } = null!;
     public string? ImageUrl { get; set; } 
     public string? AudioPreviewUrl { get; set; }
