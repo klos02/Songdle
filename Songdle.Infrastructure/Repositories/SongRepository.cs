@@ -10,7 +10,11 @@ public class SongRepository(AppDbContext context) : ISongRepository
 {
     public async Task AddSongAsync(Song song)
     {
-        await context.Songs.AddAsync(song);
+        if(await SongExistsAsync(song))
+        {
+            throw new InvalidOperationException("Song already exists in the repository.");
+        }
+        else await context.Songs.AddAsync(song);
     }
 
     public async Task<IEnumerable<Song>> GetAllSongsAsync()
