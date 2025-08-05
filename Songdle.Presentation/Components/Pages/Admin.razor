@@ -19,14 +19,21 @@
 
 @if (songs != null && songs.Any())
 {
-    <ul>
-        @foreach (var song in songs)
-        {
-            <li>@song.Title - @song.Artist - @song.Album <button class="btn btn-secondary"
-                    @onclick="() => SetTodaysGame(song.Id)">Ustaw jako dzisiejszą</button> </li>
-        }
-    </ul>
+    <div style="height: 25vh; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 6px;">
+        <ul class="list-unstyled">
+            @foreach (var song in songs)
+            {
+                <li class="mb-2">
+                    <strong>@song.Title</strong> - @song.Artist - @song.Album
+                    <button class="btn btn-sm btn-secondary ms-2" @onclick="() => SetTodaysGame(song.Id)">
+                        Ustaw jako dzisiejszą
+                    </button>
+                </li>
+            }
+        </ul>
+    </div>
 }
+
 
 <h3>Dodaj piosenkę z JSON</h3>
 
@@ -60,7 +67,8 @@
         catch (Exception ex)
         {
             Console.WriteLine($"Error adding song from JSON: {ex.Message}");
-        }finally
+        }
+        finally
         {
             await GetSongs();
         }

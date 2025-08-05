@@ -41,7 +41,7 @@
                     <th>Tytuł</th>
                     <th>Artysta</th>
                     <th>Album</th>
-                    <th>Rok</th>
+                    <th>Data wydania</th>
                     <th>Kraj</th>
                     <th>Gatunek</th>
                     <th>Featy</th>
@@ -63,9 +63,9 @@
         <td class="@GetBoolColor(check.AlbumCheck)">
             @result.Album
         </td>
-        <td class="@GetDateCell(result.ReleaseDate.Year, check.ReleaseDateCheck)">
-            @result.ReleaseDate.Year
-        </td>
+        <td>
+    @GetDateCell(result.ReleaseDate.Date, check.ReleaseDateCheck)
+</td>
         <td class="@GetBoolColor(check.CountryCheck)">
             @result.Country
         </td>
@@ -179,7 +179,7 @@
 
     private string GetBoolColor(bool value) => value ? "text-success" : "text-danger";
 
-    private MarkupString GetDateCell(int year, int check)
+    private MarkupString GetDateCell(DateTime date, int check)
     {
         var icon = check switch
         {
@@ -189,7 +189,7 @@
             _ => ""
         };
 
-        return new MarkupString($"<span class='{GetColorClass(check)}'>{year}{icon}</span>");
+        return new MarkupString($"<span class='{GetColorClass(check)}'>{date.Date.ToString("dd.MM.yyyy")}{icon}</span>");
     }
 
     private string GetFeatsColor(int check) => GetColorClass(check);

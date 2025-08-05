@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using Microsoft.EntityFrameworkCore;
 using Songdle.Domain.Entities;
 using Songdle.Domain.Interfaces;
@@ -10,7 +11,7 @@ public class SongRepository(AppDbContext context) : ISongRepository
 {
     public async Task AddSongAsync(Song song)
     {
-        if(await SongExistsAsync(song))
+        if (await SongExistsAsync(song))
         {
             throw new InvalidOperationException("Song already exists in the repository.");
         }
@@ -55,13 +56,15 @@ public class SongRepository(AppDbContext context) : ISongRepository
 
     }
 
-    public Task<bool> SongExistsAsync(Song song)
+    public async Task<bool> SongExistsAsync(Song song)
     {
         if (song == null)
         {
             throw new ArgumentNullException(nameof(song), "Song cannot be null.");
         }
 
-        return context.Songs.AnyAsync(s => s.Title.Equals(song.Title, StringComparison.OrdinalIgnoreCase) && s.Artist.Equals(song.Artist, StringComparison.OrdinalIgnoreCase));
+        return await context.Songs.AnyAsync(s => s.Title.ToLower() == song.Title.ToLower() &&
+          s.Artist.ToLower() == song.Artist.ToLower());
+
     }
 }
