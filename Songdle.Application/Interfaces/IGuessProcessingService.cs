@@ -6,4 +6,6 @@ namespace Songdle.Application.Interfaces;
 public interface IGuessProcessingService
 {
     public Task<AnswerCheckDto> GuessSong(AnswerDto answer, TodaysGameDto todaysGame);
+
+    public Task<AnswerDto> GetAnswerDto(SongDto song);
 }

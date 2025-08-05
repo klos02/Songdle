@@ -11,5 +11,6 @@ public interface ISongHandler
     Task<Song?> GetSongByTitleAsync(string title);
     Task<IEnumerable<Song>> SearchSongsByTitleAsync(string partialTitle);
     Task AddSongAsync(Song song);
+    Task AddSongFromJsonAsync(string json);
     Task DeleteSongAsync(int id);
 }

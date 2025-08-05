@@ -35,6 +35,8 @@ builder.Services.AddScoped<ISongHandler, SongHandler>();
 builder.Services.AddScoped<ISongProcessingService, SongProcessingService>();
 builder.Services.AddScoped<ITodaysGameProcessingService, TodaysGameProcessingService>();
 builder.Services.AddScoped<ITodaysGameHandler, TodaysGameHandler>();
+builder.Services.AddScoped<IGuessHandler, GuessHandler>();
+builder.Services.AddScoped<IGuessProcessingService, GuessProcessingService>();
 
 
 var app = builder.Build();

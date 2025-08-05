@@ -6,6 +6,20 @@ namespace Songdle.Application.Services;
 
 public class GuessProcessingService(IGuessHandler guessHandler) : IGuessProcessingService
 {
+    public Task<AnswerDto> GetAnswerDto(SongDto song)
+    {
+        return Task.FromResult(new AnswerDto
+        {
+            Title = song.Title,
+            Artist = song.Artist,
+            Album = song.Album,
+            ReleaseDate = song.ReleaseDate,
+            Genre = song.Genre,
+            Country = song.Country,
+            Feats = song.Feats ?? []
+        });
+    }
+
     public Task<AnswerCheckDto> GuessSong(AnswerDto answer, TodaysGameDto todaysGame)
     {
         return guessHandler.GuessSong(answer, todaysGame);

@@ -3,6 +3,7 @@
 @using Songdle.Application.Interfaces
 @inject ISongProcessingService SongProcessingService
 @inject ITodaysGameProcessingService TodaysGameProcessingService
+@inject IGuessProcessingService GuessProcessingService
 
 @rendermode InteractiveServer
 <PageTitle>Songdle</PageTitle>
@@ -11,24 +12,25 @@
     <h2 class="text-center mb-4">🎵 Songdle</h2>
 
     <div class="position-relative">
-        <input type="text" class="form-control" placeholder="Wpisz tytuł piosenki..." 
-               @bind="guessInput" @oninput="OnInputChanged" />
+        <input type="text" class="form-control" placeholder="Wpisz tytuł piosenki..." @bind="guessInput"
+            @oninput="OnInputChanged" />
+            
 
         @if (suggestions.Any())
         {
             <ul class="list-group position-absolute w-100 z-3 shadow" style="max-height: 200px; overflow-y: auto;">
                 @foreach (var suggestion in suggestions)
                 {
-                    <li class="list-group-item list-group-item-action" 
-                        @onclick="() => SelectSuggestion(suggestion)">
+                    <li class="list-group-item list-group-item-action" @onclick="() => SelectSuggestion(suggestion)">
                         @suggestion.Artist - @suggestion.Title
                     </li>
                 }
             </ul>
         }
+        <button class="btn btn-success mt-3" @onclick="SubmitGuess" disabled="@(!isSongSelected)">Zgaduję</button>
     </div>
 
-    <button class="btn btn-success mt-3" @onclick="SubmitGuess" disabled="@(!isSongSelected)">Zgaduję</button>
+    
 
     @if (guessResults.Any())
     {
@@ -46,19 +48,35 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var result in guessResults.AsEnumerable().Reverse())
-                {
-                    <tr>
-                        
-                        <td>@result.Title</td>
-                        <td>@result.Artist</td>
-                        <td>@result.Album</td>
-                        <td>@result.ReleaseDate.Year</td>
-                        <td>@result.Country</td>
-                        <td>@result.Genre</td>
-                        <td>@string.Join(", ", result.Feats)</td>
-                    </tr>
-                }
+               @for (int i = guessResults.Count - 1; i >= 0; i--)
+{
+    var result = guessResults[i];
+    var check = answerResults[i];
+
+    <tr>
+        <td class="@GetColorClass(check.TitleCheck)">
+            @result.Title
+        </td>
+        <td class="@GetBoolColor(check.ArtistCheck)">
+            @result.Artist
+        </td>
+        <td class="@GetBoolColor(check.AlbumCheck)">
+            @result.Album
+        </td>
+        <td class="@GetDateCell(result.ReleaseDate.Year, check.ReleaseDateCheck)">
+            @result.ReleaseDate.Year
+        </td>
+        <td class="@GetBoolColor(check.CountryCheck)">
+            @result.Country
+        </td>
+        <td class="@GetBoolColor(check.GenreCheck)">
+            @result.Genre
+        </td>
+        <td class="@GetFeatsColor(check.FeatsCheck)">
+            @string.Join(", ", result.Feats)
+        </td>
+    </tr>
+}
             </tbody>
         </table>
     }
@@ -76,18 +94,19 @@
     private SongDto? selectedSong = null;
     private List<SongDto> suggestions = new();
     private List<SongDto> guessResults = new();
+    private List<AnswerCheckDto> answerResults = new();
     private TodaysGameDto todaysGame;
     private bool isCorrect = false;
     private bool isLoadingGame = false;
 
     private bool isSongSelected => selectedSong != null;
 
-     protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         await GetTodaysGame();
     }
 
-     private async Task GetTodaysGame()
+    private async Task GetTodaysGame()
     {
         try
         {
@@ -104,7 +123,7 @@
         }
     }
 
-     private async Task OnInputChanged(ChangeEventArgs e)
+    private async Task OnInputChanged(ChangeEventArgs e)
     {
         guessInput = e.Value?.ToString() ?? "";
         selectedSong = null;
@@ -126,11 +145,17 @@
         suggestions.Clear();
     }
 
-   private Task SubmitGuess()
+    private async Task SubmitGuess()
     {
         if (selectedSong is not null)
         {
             guessResults.Add(selectedSong);
+
+            var answerDto = await GuessProcessingService.GetAnswerDto(selectedSong);
+            var answerCheck = GuessProcessingService.GuessSong(answerDto, todaysGame).Result;
+
+            answerResults.Add(answerCheck);
+
             isCorrect = selectedSong.Id == todaysGame.SongOfTheDayId;
             //Console.WriteLine($"Zgadnięto piosenkę: {selectedSong.Title} - Poprawność: {isCorrect}");
             //Console.WriteLine($"Dzisiejsza piosenka: {todaysGame.SongOfTheDay?.Title} (ID: {todaysGame.SongOfTheDayId})");
@@ -139,7 +164,34 @@
         guessInput = "";
         selectedSong = null;
 
-        return Task.CompletedTask;
-    }
     }
 
+
+    private string GetColorClass(int check)
+    {
+        return check switch
+        {
+            1 => "text-success", // zielony
+            2 => "text-warning", // pomarańczowy
+            _ => "text-danger" // czerwony
+        };
+    }
+
+    private string GetBoolColor(bool value) => value ? "text-success" : "text-danger";
+
+    private MarkupString GetDateCell(int year, int check)
+    {
+        var icon = check switch
+        {
+            1 => "", // trafiony
+            0 => " 🔼", // zgadujący podał datę wcześniejszą
+            2 => " 🔽", // podał późniejszą
+            _ => ""
+        };
+
+        return new MarkupString($"<span class='{GetColorClass(check)}'>{year}{icon}</span>");
+    }
+
+    private string GetFeatsColor(int check) => GetColorClass(check);
+
+}
