@@ -11,4 +11,5 @@ public interface ISongRepository
     Task DeleteSongAsync(int id);
     Task<Song?> GetSongByTitleAsync(string title);
     Task<IEnumerable<Song>> SearchSongsByTitleAsync(string partialTitle);
+    Task<bool> SongExistsAsync(Song song);
 }

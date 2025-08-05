@@ -5,6 +5,7 @@
 @rendermode InteractiveServer
 @inject ISongProcessingService SongProcessingService
 @inject ITodaysGameProcessingService TodaysGameProcessingService
+@inject IAdminConsole AdminConsole
 
 <PageTitle>Admin Panel</PageTitle>
 
@@ -17,14 +18,25 @@
 
 
 @if (songs != null && songs.Any())
-    {
-        <ul>
-            @foreach (var song in songs)
-            {
-                <li>@song.Title - @song.Artist - @song.Album  <button class="btn btn-secondary" @onclick="() => SetTodaysGame(song.Id)" >Ustaw jako dzisiejszą</button> </li>
-            }
-        </ul>
-    }
+{
+    <ul>
+        @foreach (var song in songs)
+        {
+            <li>@song.Title - @song.Artist - @song.Album <button class="btn btn-secondary"
+                    @onclick="() => SetTodaysGame(song.Id)">Ustaw jako dzisiejszą</button> </li>
+        }
+    </ul>
+}
+
+<h3>Dodaj piosenkę z JSON</h3>
+
+<textarea class="form-control" @bind="jsonInput" rows="10" placeholder="Wklej JSON tutaj"></textarea>
+<button class="btn btn-success mt-2" @onclick="SubmitJson">Dodaj z JSON</button>
+
+<hr />
+
+<h3>Dodaj piosenkę z pliku JSON</h3>
+
 
 
 
@@ -34,7 +46,25 @@
     private IEnumerable<SongDto> songs = new List<SongDto>();
     private bool isLoading = false;
 
+    private string jsonInput = "";
 
+
+
+    private async Task SubmitJson()
+    {
+        try
+        {
+            await AdminConsole.AddSongFromJsonAsync(jsonInput);
+            jsonInput = "";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding song from JSON: {ex.Message}");
+        }finally
+        {
+            await GetSongs();
+        }
+    }
     private async Task GetSongs()
     {
         try

@@ -37,6 +37,7 @@ builder.Services.AddScoped<ITodaysGameProcessingService, TodaysGameProcessingSer
 builder.Services.AddScoped<ITodaysGameHandler, TodaysGameHandler>();
 builder.Services.AddScoped<IGuessHandler, GuessHandler>();
 builder.Services.AddScoped<IGuessProcessingService, GuessProcessingService>();
+builder.Services.AddScoped<IAdminConsole, AdminConsole>();
 
 
 var app = builder.Build();

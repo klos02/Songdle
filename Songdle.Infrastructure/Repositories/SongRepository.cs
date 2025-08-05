@@ -50,4 +50,14 @@ public class SongRepository(AppDbContext context) : ISongRepository
            .ToListAsync();
 
     }
+
+    public Task<bool> SongExistsAsync(Song song)
+    {
+        if (song == null)
+        {
+            throw new ArgumentNullException(nameof(song), "Song cannot be null.");
+        }
+
+        return context.Songs.AnyAsync(s => s.Title.Equals(song.Title, StringComparison.OrdinalIgnoreCase) && s.Artist.Equals(song.Artist, StringComparison.OrdinalIgnoreCase));
+    }
 }
