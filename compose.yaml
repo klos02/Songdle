@@ -1,0 +1,42 @@
+services:
+  server:
+    build:
+      context: .
+      target: final
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 8080:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - ASPNETCORE_ENVIRONMENT=Development
+      
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+ #     - MYSQL_USER=${DB_USER}
+ #     - MYSQL_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p$${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

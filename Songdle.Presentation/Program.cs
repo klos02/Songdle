@@ -9,7 +9,7 @@ using Songdle.Application.Interfaces;
 using Songdle.Infrastructure.Services;
 using Songdle.Application.Services;
 
-Env.Load();
+//Env.Load();
 
 
 var builder = WebApplication.CreateBuilder(args);
