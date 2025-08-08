@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@rendermode InteractiveServer
+
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+
+@if (!SignInManager.IsSignedIn(User))
+{
+        <button class="btn btn-outline-success" type="submit" @onclick="Login">Zaloguj</button>
+    
+}
+else
+{
+    <p>Welcome, @User.Identity?.Name!</p>
+    <button class="btn btn-primary" @onclick="Logout">Wyloguj</button>
+}
+
+
+
+@code {
+    private ClaimsPrincipal User;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        User = authState.User;
+    }
+
+    private void Login()
+    {
+        NavigationManager.NavigateTo("/auth/login", forceLoad: true);
+        
+    }
+
+    private void Logout()
+    {
+        NavigationManager.NavigateTo("/auth/logout", forceLoad: true);
+    }
+}

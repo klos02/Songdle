@@ -1,4 +1,6 @@
 ﻿@page "/admin"
+@attribute [Authorize(Roles = "Admin")]
+@using Microsoft.AspNetCore.Authorization
 @using Songdle.Application.DTOs
 @using Songdle.Application.Interfaces
 

@@ -8,8 +8,9 @@ using Songdle.Infrastructure.Repositories;
 using Songdle.Application.Interfaces;
 using Songdle.Infrastructure.Services;
 using Songdle.Application.Services;
+using Microsoft.AspNetCore.Identity;
 
-//Env.Load();
+Env.Load();
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,25 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 42))));
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.SignIn.RequireConfirmedAccount = false;
+})
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/non-authorized";
+    options.AccessDeniedPath = "/access-denied";
+});
+
+
 builder.Services.AddScoped<ISongRepository, SongRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITodaysGameRepository, TodaysGameRepository>();
@@ -39,6 +59,8 @@ builder.Services.AddScoped<IGuessHandler, GuessHandler>();
 builder.Services.AddScoped<IGuessProcessingService, GuessProcessingService>();
 builder.Services.AddScoped<IAdminConsole, AdminConsole>();
 
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -56,14 +78,53 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// // 🔹 SEED użytkownika admina
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
+//     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+//     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+//     string adminEmail = "admin@klos.com";
+//     string adminPassword = "Baniak2137!";
+
+//     // Tworzymy rolę Admin jeśli nie istnieje
+//     if (!await roleManager.RoleExistsAsync("Admin"))
+//     {
+//         await roleManager.CreateAsync(new IdentityRole("Admin"));
+//     }
+
+//     // Tworzymy użytkownika jeśli nie istnieje
+//     var adminUser = await userManager.FindByEmailAsync(adminEmail);
+//     if (adminUser == null)
+//     {
+//         adminUser = new IdentityUser
+//         {
+//             UserName = adminEmail,
+//             Email = adminEmail,
+//             EmailConfirmed = true
+//         };
+//         await userManager.CreateAsync(adminUser, adminPassword);
+//         await userManager.AddToRoleAsync(adminUser, "Admin");
+//     }
+// }
+
+
+
+
 app.UseHttpsRedirection();
 
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
+app.MapRazorPages();
+app.MapControllers();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
 
 
 
