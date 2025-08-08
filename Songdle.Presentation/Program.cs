@@ -11,7 +11,7 @@ using Songdle.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Components;
 
-Env.Load();
+//Env.Load();
 
 
 var builder = WebApplication.CreateBuilder(args);
