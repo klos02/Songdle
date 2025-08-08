@@ -9,6 +9,7 @@ using Songdle.Application.Interfaces;
 using Songdle.Infrastructure.Services;
 using Songdle.Application.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Components;
 
 Env.Load();
 
@@ -45,6 +46,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/non-authorized";
     options.AccessDeniedPath = "/access-denied";
+    options.Cookie.Name = "SongdleAuthCookie";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 });
 
 
@@ -61,6 +64,14 @@ builder.Services.AddScoped<IAdminConsole, AdminConsole>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddScoped(sp =>
+{
+    var navigationManager = sp.GetRequiredService<NavigationManager>();
+    return new HttpClient
+    {
+        BaseAddress = new Uri(navigationManager.BaseUri)
+    };
+});
 
 var app = builder.Build();
 
@@ -78,44 +89,15 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// // 🔹 SEED użytkownika admina
-// using (var scope = app.Services.CreateScope())
-// {
-//     var services = scope.ServiceProvider;
-//     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-//     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-//     string adminEmail = "admin@klos.com";
-//     string adminPassword = "Baniak2137!";
-
-//     // Tworzymy rolę Admin jeśli nie istnieje
-//     if (!await roleManager.RoleExistsAsync("Admin"))
-//     {
-//         await roleManager.CreateAsync(new IdentityRole("Admin"));
-//     }
-
-//     // Tworzymy użytkownika jeśli nie istnieje
-//     var adminUser = await userManager.FindByEmailAsync(adminEmail);
-//     if (adminUser == null)
-//     {
-//         adminUser = new IdentityUser
-//         {
-//             UserName = adminEmail,
-//             Email = adminEmail,
-//             EmailConfirmed = true
-//         };
-//         await userManager.CreateAsync(adminUser, adminPassword);
-//         await userManager.AddToRoleAsync(adminUser, "Admin");
-//     }
-// }
 
 
-
-
-app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseHttpsRedirection();
+
+
 app.UseAntiforgery();
 
 app.MapStaticAssets();

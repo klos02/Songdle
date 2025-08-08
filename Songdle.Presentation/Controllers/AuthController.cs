@@ -44,6 +44,6 @@ public class AuthController(SignInManager<IdentityUser> _signInManager, UserMana
     public async Task<IActionResult> Logout()
     {
         await _signInManager.SignOutAsync();
-        return Redirect("/");
+        return Ok();
     }
 }
