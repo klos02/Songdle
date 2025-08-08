@@ -43,7 +43,14 @@ else
 
     private async Task Logout()
     {
-        await Http.PostAsync("/auth/logout", null);
-        NavigationManager.NavigateTo("/", true);
+        var response = await Http.PostAsync("/auth/logout", null);
+        if (response.IsSuccessStatusCode)
+        {
+            NavigationManager.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            Console.WriteLine("Logout failed");
+        }
     }
 }

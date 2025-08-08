@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,7 +44,9 @@ public class AuthController(SignInManager<IdentityUser> _signInManager, UserMana
     [HttpPost("/auth/logout")]
     public async Task<IActionResult> Logout()
     {
+        Console.WriteLine("Logging out user...");
         await _signInManager.SignOutAsync();
-        return Ok();
+        //await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+        return _signInManager.IsSignedIn(User) ? NotFound() : Ok();
     }
 }
