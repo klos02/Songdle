@@ -102,6 +102,38 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// 🔹 SEED użytkownika admina
+using (var scope = app.Services.CreateScope())
+{
+    Env.Load();
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+    string adminEmail = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
+    string adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
+
+    
+    if (!await roleManager.RoleExistsAsync("Admin"))
+    {
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    }
+
+    
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new IdentityUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true
+        };
+        await userManager.CreateAsync(adminUser, adminPassword);
+        await userManager.AddToRoleAsync(adminUser, "Admin");
+    }
+}
+
 
 
 
