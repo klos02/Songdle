@@ -50,6 +50,17 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.SameSite = SameSiteMode.Lax;
+
+     options.Events.OnRedirectToLogin = context =>
+    {
+        var redirectUri = context.RedirectUri;
+        if (redirectUri.StartsWith("http://"))
+        {
+            redirectUri = redirectUri.Replace("http://", "https://");
+        }
+        context.Response.Redirect(redirectUri);
+        return Task.CompletedTask;
+    };
 });
 
 
