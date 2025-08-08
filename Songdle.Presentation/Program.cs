@@ -48,6 +48,8 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/access-denied";
     options.Cookie.Name = "SongdleAuthCookie";
     options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
 
