@@ -10,8 +10,10 @@ using Songdle.Infrastructure.Services;
 using Songdle.Application.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Components;
+using Songdle.Infrastructure.Spotify;
+using Songdle.Infrastructure.Spotify.Options;
 
-//Env.Load();
+Env.Load();
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,8 +65,17 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
+builder.Services.Configure<SpotifyOptions>(options =>
+{
+    options.ClientId = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_ID");
+    options.ClientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
+});
 
-builder.Services.AddScoped<ISongRepository, SongRepository>();
+
+//builder.Services.AddScoped<ISongRepository, SongRepository>();
+builder.Services.AddScoped<SpotifyAuthService>();
+builder.Services.AddHttpClient<ISongRepository, SpotifySongRepository>();
+// SPOTIFY
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITodaysGameRepository, TodaysGameRepository>();
 builder.Services.AddScoped<ISongHandler, SongHandler>();
@@ -102,37 +113,37 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// 🔹 SEED użytkownika admina
-using (var scope = app.Services.CreateScope())
-{
-    Env.Load();
-    var services = scope.ServiceProvider;
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+// // 🔹 SEED użytkownika admina
+// using (var scope = app.Services.CreateScope())
+// {
+//     Env.Load();
+//     var services = scope.ServiceProvider;
+//     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+//     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-    string adminEmail = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
-    string adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
-
-    
-    if (!await roleManager.RoleExistsAsync("Admin"))
-    {
-        await roleManager.CreateAsync(new IdentityRole("Admin"));
-    }
+//     string adminEmail = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
+//     string adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
 
     
-    var adminUser = await userManager.FindByEmailAsync(adminEmail);
-    if (adminUser == null)
-    {
-        adminUser = new IdentityUser
-        {
-            UserName = adminEmail,
-            Email = adminEmail,
-            EmailConfirmed = true
-        };
-        await userManager.CreateAsync(adminUser, adminPassword);
-        await userManager.AddToRoleAsync(adminUser, "Admin");
-    }
-}
+//     if (!await roleManager.RoleExistsAsync("Admin"))
+//     {
+//         await roleManager.CreateAsync(new IdentityRole("Admin"));
+//     }
+
+    
+//     var adminUser = await userManager.FindByEmailAsync(adminEmail);
+//     if (adminUser == null)
+//     {
+//         adminUser = new IdentityUser
+//         {
+//             UserName = adminEmail,
+//             Email = adminEmail,
+//             EmailConfirmed = true
+//         };
+//         await userManager.CreateAsync(adminUser, adminPassword);
+//         await userManager.AddToRoleAsync(adminUser, "Admin");
+//     }
+// }
 
 
 

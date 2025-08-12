@@ -5,6 +5,7 @@ namespace Songdle.Domain.Entities;
 public class Song
 {
     public int Id { get; set; }
+    public string? SpotifyId { get; set; } = null!;
     public string Title { get; set; }
     public string Artist { get; set; }
     public List<string> Feats { get; set; } = [];

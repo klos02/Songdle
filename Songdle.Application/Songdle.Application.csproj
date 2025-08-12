@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Songdle.Domain\Songdle.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Interfaces\Spotify\" />
+  </ItemGroup>
+
 </Project>
