@@ -45,7 +45,7 @@ public class SongHandler(ISongRepository songRepository, IUnitOfWork unitOfWork)
         return await songRepository.GetAllSongsAsync();
     }
 
-    public Task<Song?> GetSongByIdAsync(int id)
+    public Task<Song?> GetSongByIdAsync(string id)
     {
         return songRepository.GetSongByIdAsync(id)
             ?? throw new KeyNotFoundException($"Song with ID {id} not found.");

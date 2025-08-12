@@ -11,13 +11,19 @@
 
 <PageTitle>Admin Panel</PageTitle>
 
-<button class="btn btn-primary" @onclick="GetSongs">GetSongs</button>
+<h3>Wyszukaj piosenkę</h3>
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Wpisz tytuł lub wykonawcę..." @bind="searchQuery"
+        @bind:event="oninput" />
+    <button class="btn btn-primary" @onclick="SearchSongs" disabled="@isLoading">
+        Szukaj
+    </button>
+</div>
 
 @if (isLoading)
 {
-    <p>Loading songs...</p>
+    <p>Wyszukiwanie...</p>
 }
-
 
 @if (songs != null && songs.Any())
 {
@@ -26,25 +32,20 @@
             @foreach (var song in songs)
             {
                 <li class="mb-2">
-                    <strong>@song.Title</strong> - @song.Artist - @song.Album
-                    <button class="btn btn-sm btn-secondary ms-2" @onclick="() => SetTodaysGame(song.Id)">
-                        Ustaw jako dzisiejszą
+                    <strong>@song.Title</strong> - @song.Artist (@song.Album)
+                    <button class="btn btn-sm btn-success ms-2" @onclick="() => SetTodaysGame(song.SpotifyId)">
+                        Ustaw jako dzisiejszą id:
+                        @song.SpotifyId
                     </button>
                 </li>
             }
         </ul>
     </div>
 }
-
-
-<h3>Dodaj piosenkę z JSON</h3>
-
-<textarea class="form-control" @bind="jsonInput" rows="10" placeholder="Wklej JSON tutaj"></textarea>
-<button class="btn btn-success mt-2" @onclick="SubmitJson">Dodaj z JSON</button>
-
-<hr />
-
-<h3>Dodaj piosenkę z pliku JSON</h3>
+else if (!string.IsNullOrWhiteSpace(searchQuery) && !isLoading)
+{
+    <p>Brak wyników.</p>
+}
 
 
 
@@ -55,46 +56,33 @@
     private IEnumerable<SongDto> songs = new List<SongDto>();
     private bool isLoading = false;
 
-    private string jsonInput = "";
+    private string searchQuery = "";
 
 
-
-    private async Task SubmitJson()
+    private async Task SearchSongs()
     {
-        try
+        if (string.IsNullOrWhiteSpace(searchQuery))
         {
-            await AdminConsole.AddSongFromJsonAsync(jsonInput);
-            jsonInput = "";
+            return;
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error adding song from JSON: {ex.Message}");
-        }
-        finally
-        {
-            await GetSongs();
-        }
-    }
-    private async Task GetSongs()
-    {
+
         try
         {
             isLoading = true;
-            songs = await SongProcessingService.GetAllSongsAsync();
+            songs = await SongProcessingService.SearchSongsByTitleAsync(searchQuery);
         }
         catch (Exception ex)
         {
-
-            Console.WriteLine($"Error fetching songs: {ex.Message}");
+            Console.WriteLine($"Error searching songs: {ex.Message}");
+            songs = new List<SongDto>();
         }
         finally
         {
             isLoading = false;
         }
-
     }
 
-    private async Task SetTodaysGame(int songId)
+    private async Task SetTodaysGame(string songId)
     {
         try
         {

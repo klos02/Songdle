@@ -28,7 +28,7 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
 
     }
 
-    public async Task<SongDto?> GetSongByIdAsync(int id)
+    public async Task<SongDto?> GetSongByIdAsync(string id)
     {
         try
         {
@@ -57,6 +57,11 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
             return null;
         }
 
+    }
+
+    public Task<SongDto?> GetSongByIdAsync(int id)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<SongDto?> GetSongByTitleAsync(string title)
@@ -96,6 +101,7 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
         return songs.Select(song => new SongDto
         {
             Id = song.Id,
+            SpotifyId = song.SpotifyId,
             Title = song.Title,
             Artist = song.Artist,
             Album = song.Album,

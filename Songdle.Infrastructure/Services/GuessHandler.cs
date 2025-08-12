@@ -4,45 +4,48 @@ using Songdle.Application.Interfaces;
 
 namespace Songdle.Infrastructure.Services;
 
-public class GuessHandler : IGuessHandler
+public class GuessHandler(ISongHandler songHandler) : IGuessHandler
 {
-    public Task<AnswerCheckDto> GuessSong(AnswerDto answer, TodaysGameDto todaysGame)
+    public async Task<AnswerCheckDto> GuessSong(AnswerDto answer, TodaysGameDto todaysGame)
     {
-        if (answer == null || todaysGame == null || todaysGame.SongOfTheDay == null)
+
+        var songOfTheDay = await songHandler.GetSongByIdAsync(todaysGame.SpotifySongId);
+
+        if (answer == null || todaysGame == null || todaysGame.SpotifySongId == null)
         {
             throw new ArgumentNullException("Answer or Today's Game cannot be null.");
         }
 
-        bool titleCheck = string.Equals(answer.Title, todaysGame.SongOfTheDay.Title, StringComparison.OrdinalIgnoreCase);
+        Console.WriteLine($"Sprawdzanie odpowiedzi: {answer.Title} - {answer.Artist} (ID: {todaysGame.SpotifySongId})");
+        bool titleCheck = string.Equals(answer.Title, songOfTheDay.Title, StringComparison.OrdinalIgnoreCase);
         bool containsAny = false;
 
         if (!titleCheck)
         {
             var titleWords = answer.Title.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            containsAny = titleWords.Any(word => todaysGame.SongOfTheDay.Title.Contains(word, StringComparison.OrdinalIgnoreCase));
+            containsAny = titleWords.Any(word => songOfTheDay.Title.Contains(word, StringComparison.OrdinalIgnoreCase));
         }
 
-        bool featsCheck = answer.Feats.OrderBy(x => x).SequenceEqual(todaysGame.SongOfTheDay.Feats?.OrderBy(x => x) ?? Enumerable.Empty<string>());
+        bool featsCheck = answer.Feats.OrderBy(x => x).SequenceEqual(songOfTheDay.Feats?.OrderBy(x => x) ?? Enumerable.Empty<string>());
         bool anyMatchingFeats = false;
 
         if (!featsCheck)
         {
-            anyMatchingFeats = answer.Feats.Any(feat => todaysGame.SongOfTheDay.Feats?.Contains(feat, StringComparer.OrdinalIgnoreCase) == true);
+            anyMatchingFeats = answer.Feats.Any(feat => songOfTheDay.Feats?.Contains(feat, StringComparer.OrdinalIgnoreCase) == true);
         }
 
 
         var answerCheck = new AnswerCheckDto
         {
             TitleCheck = titleCheck ? 1 : containsAny ? 2 : 0,
-            ArtistCheck = string.Equals(answer.Artist, todaysGame.SongOfTheDay?.Artist, StringComparison.OrdinalIgnoreCase),
+            ArtistCheck = string.Equals(answer.Artist, songOfTheDay?.Artist, StringComparison.OrdinalIgnoreCase),
             FeatsCheck = featsCheck ? 1 : anyMatchingFeats ? 2 : 0,
-            AlbumCheck = string.Equals(answer.Album, todaysGame.SongOfTheDay?.Album, StringComparison.OrdinalIgnoreCase),
-            ReleaseDateCheck = answer.ReleaseDate.Date == todaysGame.SongOfTheDay?.ReleaseDate.Date ? 1
-                : answer.ReleaseDate.Date < todaysGame.SongOfTheDay?.ReleaseDate.Date ? 0 : 2,
-            GenreCheck = string.Equals(answer.Genre, todaysGame.SongOfTheDay?.Genre, StringComparison.OrdinalIgnoreCase),
-            CountryCheck = string.Equals(answer.Country, todaysGame.SongOfTheDay?.Country, StringComparison.OrdinalIgnoreCase)
+            AlbumCheck = string.Equals(answer.Album, songOfTheDay?.Album, StringComparison.OrdinalIgnoreCase),
+            ReleaseDateCheck = answer.ReleaseDate.Date == songOfTheDay?.ReleaseDate.Date ? 1
+                : answer.ReleaseDate.Date < songOfTheDay?.ReleaseDate.Date ? 0 : 2,
+            //ADD Duration check
         };
 
-        return Task.FromResult(answerCheck);
+        return answerCheck;
     }
 }

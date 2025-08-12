@@ -10,7 +10,7 @@ public class TodaysGameRepository(AppDbContext context) : ITodaysGameRepository
 {
     public async Task<TodaysGame?> GetTodaysGameAsync(DateTime date)
     {
-        return await context.Games.Include(g => g.SongOfTheDay)
+        return await context.Games
             .FirstOrDefaultAsync(g => g.Date.Date == date.Date);
     }
 
