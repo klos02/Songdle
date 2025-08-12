@@ -8,6 +8,7 @@ public interface ISongProcessingService
 {
 
     Task<SongDto?> GetSongByIdAsync(int id);
+    Task<SongDto?> GetSongByIdAsync(string id);
     Task<IEnumerable<SongDto>> GetAllSongsAsync();
     Task<SongDto?> GetSongByTitleAsync(string title);
     Task<IEnumerable<SongDto>> SearchSongsByTitleAsync(string partialTitle);

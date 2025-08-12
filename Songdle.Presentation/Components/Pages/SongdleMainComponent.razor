@@ -42,8 +42,6 @@
                     <th>Artysta</th>
                     <th>Album</th>
                     <th>Data wydania</th>
-                    <th>Kraj</th>
-                    <th>Gatunek</th>
                     <th>Featy</th>
                 </tr>
             </thead>
@@ -66,12 +64,6 @@
         <td>
     @GetDateCell(result.ReleaseDate.Date, check.ReleaseDateCheck)
 </td>
-        <td class="@GetBoolColor(check.CountryCheck)">
-            @result.Country
-        </td>
-        <td class="@GetBoolColor(check.GenreCheck)">
-            @result.Genre
-        </td>
         <td class="@GetFeatsColor(check.FeatsCheck)">
             @string.Join(", ", result.Feats)
         </td>
@@ -149,16 +141,17 @@
     {
         if (selectedSong is not null)
         {
-            guessResults.Add(selectedSong);
+            
 
             var answerDto = await GuessProcessingService.GetAnswerDto(selectedSong);
-            var answerCheck = GuessProcessingService.GuessSong(answerDto, todaysGame).Result;
-
+            var answerCheck = await GuessProcessingService.GuessSong(answerDto, todaysGame);
+            
+            guessResults.Add(selectedSong);
             answerResults.Add(answerCheck);
 
-            isCorrect = selectedSong.Id == todaysGame.SongOfTheDayId;
-            //Console.WriteLine($"Zgadnięto piosenkę: {selectedSong.Title} - Poprawność: {isCorrect}");
-            //Console.WriteLine($"Dzisiejsza piosenka: {todaysGame.SongOfTheDay?.Title} (ID: {todaysGame.SongOfTheDayId})");
+            isCorrect = selectedSong.SpotifyId == todaysGame.SpotifySongId;
+            Console.WriteLine($"Zgadnięto piosenkę: {selectedSong.Title} - Poprawność: {isCorrect}");
+            Console.WriteLine($"Dzisiejsza piosenka: {todaysGame.SpotifySongId}");
         }
 
         guessInput = "";

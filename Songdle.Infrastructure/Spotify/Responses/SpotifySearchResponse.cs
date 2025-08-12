@@ -7,6 +7,11 @@ public class SpotifySearchResponse
     public Tracks tracks { get; set; }
 }
 
+public class SpotifyTrackResponse
+{
+    public TrackItem track { get; set; }
+}
+
 public class Tracks
 {
     public List<TrackItem> items { get; set; }

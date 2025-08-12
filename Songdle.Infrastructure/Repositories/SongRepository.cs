@@ -67,4 +67,9 @@ public class SongRepository(AppDbContext context) : ISongRepository
           s.Artist.ToLower() == song.Artist.ToLower());
 
     }
+
+    public Task<Song?> GetSongByIdAsync(string id)
+    {
+        throw new NotImplementedException();
+    }
 }

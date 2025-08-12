@@ -6,7 +6,7 @@ namespace Songdle.Application.Interfaces;
 
 public interface ISongHandler
 {
-    Task<Song?> GetSongByIdAsync(int id);
+    Task<Song?> GetSongByIdAsync(string id);
     Task<IEnumerable<Song>> GetAllSongsAsync();
     Task<Song?> GetSongByTitleAsync(string title);
     Task<IEnumerable<Song>> SearchSongsByTitleAsync(string partialTitle);

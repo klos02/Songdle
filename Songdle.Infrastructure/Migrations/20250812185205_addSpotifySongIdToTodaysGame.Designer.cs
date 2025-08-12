@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Songdle.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Songdle.Infrastructure.Data;
 namespace Songdle.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250812185205_addSpotifySongIdToTodaysGame")]
+    partial class addSpotifySongIdToTodaysGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -259,7 +262,6 @@ namespace Songdle.Infrastructure.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("SpotifyId")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Title")
@@ -282,10 +284,15 @@ namespace Songdle.Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int>("SongOfTheDayId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SpotifySongId")
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SongOfTheDayId");
 
                     b.ToTable("Games");
                 });
@@ -339,6 +346,17 @@ namespace Songdle.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Songdle.Domain.Entities.TodaysGame", b =>
+                {
+                    b.HasOne("Songdle.Domain.Entities.Song", "SongOfTheDay")
+                        .WithMany()
+                        .HasForeignKey("SongOfTheDayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SongOfTheDay");
                 });
 #pragma warning restore 612, 618
         }
