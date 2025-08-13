@@ -6,80 +6,157 @@
 @inject IGuessProcessingService GuessProcessingService
 
 @rendermode InteractiveServer
-<PageTitle>Songdle</PageTitle>
+<PageTitle>Songdle - Daily Music Guessing Game</PageTitle>
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">🎵 Songdle</h2>
-
-    <div class="position-relative">
-        <input type="text" class="form-control" placeholder="Wpisz tytuł piosenki..." @bind="guessInput"
-            @oninput="OnInputChanged" />
-            
-
-        @if (suggestions.Any())
-        {
-            <ul class="list-group position-absolute w-100 z-3 shadow" style="max-height: 200px; overflow-y: auto;">
-                @foreach (var suggestion in suggestions)
-                {
-                    <li class="list-group-item list-group-item-action" @onclick="() => SelectSuggestion(suggestion)">
-                        @suggestion.Artist - @suggestion.Title
-                    </li>
-                }
-            </ul>
-        }
-        <button class="btn btn-success mt-3" @onclick="SubmitGuess" disabled="@(!isSongSelected)">Zgaduję</button>
-    </div>
-
-    
-
-    @if (guessResults.Any())
-    {
-        <h4 class="mt-4">Twoje próby:</h4>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Tytuł</th>
-                    <th>Artysta</th>
-                    <th>Album</th>
-                    <th>Data wydania</th>
-                    <th>Featy</th>
-                </tr>
-            </thead>
-            <tbody>
-               @for (int i = guessResults.Count - 1; i >= 0; i--)
-{
-    var result = guessResults[i];
-    var check = answerResults[i];
-
-    <tr>
-        <td class="@GetColorClass(check.TitleCheck)">
-            @result.Title
-        </td>
-        <td class="@GetBoolColor(check.ArtistCheck)">
-            @result.Artist
-        </td>
-        <td class="@GetBoolColor(check.AlbumCheck)">
-            @result.Album
-        </td>
-        <td>
-    @GetDateCell(result.ReleaseDate.Date, check.ReleaseDateCheck)
-</td>
-        <td class="@GetFeatsColor(check.FeatsCheck)">
-            @string.Join(", ", result.Feats)
-        </td>
-    </tr>
-}
-            </tbody>
-        </table>
-    }
-
-    @if (isCorrect)
-    {
-        <div class="alert alert-success mt-3">
-            🎉 Gratulacje! Odgadłeś piosenkę!
+<div class="songdle-container">
+    <!-- Header -->
+    <header class="game-header">
+        <div class="header-content">
+            <h1 class="game-title">
+                <span class="title-icon">🎵</span>
+                <span class="title-text">Songdle</span>
+            </h1>
+            <p class="game-subtitle">Guess the daily song</p>
         </div>
-    }
+    </header>
+
+    <!-- Main Game Area -->
+    <main class="game-main">
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input type="text" 
+                           class="search-input" 
+                           placeholder="Type song title..." 
+                           @bind="guessInput"
+                           @oninput="OnInputChanged"
+                           disabled="@isCorrect" />
+                    <div class="search-icon">🔍</div>
+                </div>
+
+                @if (suggestions.Any() && !isCorrect)
+                {
+                    <div class="suggestions-dropdown">
+                        @foreach (var suggestion in suggestions)
+                        {
+                            <div class="suggestion-item" @onclick="() => SelectSuggestion(suggestion)">
+                                <div class="suggestion-content">
+                                    <div class="suggestion-title">@suggestion.Title</div>
+                                    <div class="suggestion-artist">@suggestion.Artist</div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <button class="guess-button @(isSongSelected && !isCorrect ? "active" : "")" 
+                        @onclick="SubmitGuess" 
+                        disabled="@(!isSongSelected || isCorrect)">
+                    <span class="button-text">Make Guess</span>
+                    <span class="button-icon">🎯</span>
+                </button>
+            </div>
+        </div>
+
+        @if (isCorrect)
+        {
+            <div class="victory-section">
+                <div class="victory-card">
+                    <div class="victory-icon">🎉</div>
+                    <div class="victory-text">
+                        <h2>Congratulations!</h2>
+                        
+                        <p>You guessed today's song in @guessResults.Count @(guessResults.Count == 1 ? "try" : "tries")!</p>
+                    </div>
+                </div>
+            </div>
+        }
+
+      
+
+        <!-- Results Feed -->
+        @if (guessResults.Any())
+        {
+            <div class="results-section">
+                <h3 class="results-title">Your Guesses</h3>
+                
+                <div class="guess-feed">
+                    @for (int i = 0; i < guessResults.Count; i++)
+                    {
+                        var result = guessResults[i];
+                        var check = answerResults[i];
+                        var guessNumber = guessResults.Count - i;
+                        var isLatest = i == 0;
+
+                        <div class="guess-row @(isLatest ? "latest-guess" : "")">
+                            
+                            
+                            <div class="guess-card">
+                                <!-- Album Cover -->
+                                <div class="album-cover">
+                                    <img src="@result.ImageUrl" alt="@result.Title cover" 
+                                         onerror="this.style.display='none'" />
+                                    <div class="cover-placeholder">🎵</div>
+                                </div>
+
+                                <!-- Song Info -->
+                                <div class="song-info">
+                                    <div class="song-header">
+                                        <div class="song-title @GetAccuracyClass(check.TitleCheck)">
+                                            @result.Title
+                                        </div>
+                                        @if (isCorrect && isLatest)
+                                        {
+                                            <div class="success-badge">
+                                                <span class="badge-icon">🎉</span>
+                                                <span class="badge-text">Correct!</span>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <!-- Attributes Grid -->
+                                    <div class="attributes-grid">
+                                        <div class="attribute @GetBoolClass(check.ArtistCheck)">
+                                            <span class="attr-icon">👤</span>
+                                            <span class="attr-label">Artist:</span>
+                                            <span class="attr-value">@result.Artist</span>
+                                        </div>
+
+                                        <div class="attribute @GetBoolClass(check.AlbumCheck)">
+                                            <span class="attr-icon">💿</span>
+                                            <span class="attr-label">Album:</span>
+                                            <span class="attr-value">@result.Album</span>
+                                        </div>
+
+                                        <div class="attribute @GetDateClass(check.ReleaseDateCheck)">
+                                            <span class="attr-icon">📅</span>
+                                            <span class="attr-label">Release:</span>
+                                            <span class="attr-value">
+                                                @result.ReleaseDate.ToString("dd.MM.yyyy")
+                                                @GetDateArrow(check.ReleaseDateCheck)
+                                            </span>
+                                        </div>
+
+                                        <div class="attribute @GetFeatsClass(check.FeatsCheck)">
+                                            <span class="attr-icon">🤝</span>
+                                            <span class="attr-label">Feats:</span>
+                                            <span class="attr-value">@(result.Feats.Any() ? string.Join(", ", result.Feats) : "None")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Victory Message -->
+        
+    </main>
 </div>
+
 
 @code {
     private string guessInput = "";
@@ -88,6 +165,7 @@
     private List<SongDto> guessResults = new();
     private List<AnswerCheckDto> answerResults = new();
     private TodaysGameDto todaysGame;
+    private string? previewUrl = "";
     private bool isCorrect = false;
     private bool isLoadingGame = false;
 
@@ -107,7 +185,7 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Błąd podczas pobierania dzisiejszej gry: {ex.Message}");
+            Console.WriteLine($"Error loading today's game: {ex.Message}");
         }
         finally
         {
@@ -141,50 +219,54 @@
     {
         if (selectedSong is not null)
         {
-            
-
             var answerDto = await GuessProcessingService.GetAnswerDto(selectedSong);
             var answerCheck = await GuessProcessingService.GuessSong(answerDto, todaysGame);
             
-            guessResults.Add(selectedSong);
-            answerResults.Add(answerCheck);
+            guessResults.Insert(0, selectedSong);
+            answerResults.Insert(0, answerCheck);
 
             isCorrect = selectedSong.SpotifyId == todaysGame.SpotifySongId;
-            Console.WriteLine($"Zgadnięto piosenkę: {selectedSong.Title} - Poprawność: {isCorrect}");
-            Console.WriteLine($"Dzisiejsza piosenka: {todaysGame.SpotifySongId}");
+
+            if (isCorrect)
+            {
+                previewUrl = selectedSong.AudioPreviewUrl;
+            }
+            Console.WriteLine($"Guessed song: {selectedSong.Title} - Correct: {isCorrect}");
+            Console.WriteLine($"Today's song: {todaysGame.SpotifySongId}");
         }
 
         guessInput = "";
         selectedSong = null;
-
     }
 
-
-    private string GetColorClass(int check)
+    // Styling helper methods
+    private string GetAccuracyClass(int check) => check switch
     {
-        return check switch
-        {
-            1 => "text-success", // zielony
-            2 => "text-warning", // pomarańczowy
-            _ => "text-danger" // czerwony
-        };
-    }
+        1 => "correct",
+        2 => "partial", 
+        _ => "incorrect"
+    };
 
-    private string GetBoolColor(bool value) => value ? "text-success" : "text-danger";
+    private string GetBoolClass(bool isCorrect) => isCorrect ? "correct" : "incorrect";
 
-    private MarkupString GetDateCell(DateTime date, int check)
+    private string GetDateClass(int check) => check switch
     {
-        var icon = check switch
-        {
-            1 => "", // trafiony
-            0 => " 🔼", // zgadujący podał datę wcześniejszą
-            2 => " 🔽", // podał późniejszą
-            _ => ""
-        };
+        1 => "correct",
+        0 or 2 => "partial",
+        _ => "incorrect"
+    };
 
-        return new MarkupString($"<span class='{GetColorClass(check)}'>{date.Date.ToString("dd.MM.yyyy")}{icon}</span>");
-    }
+    private string GetFeatsClass(int check) => check switch
+    {
+        1 => "correct",
+        2 => "partial",
+        _ => "incorrect"
+    };
 
-    private string GetFeatsColor(int check) => GetColorClass(check);
-
+    private string GetDateArrow(int check) => check switch
+    {
+        0 => " ↑",
+        2 => " ↓", 
+        _ => ""
+    };
 }
