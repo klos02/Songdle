@@ -7,7 +7,16 @@ namespace Songdle.Infrastructure.Services;
 
 public class TodaysGameHandler(ITodaysGameRepository todaysGameRepository, IUnitOfWork unitOfWork) : ITodaysGameHandler
 {
+    public async Task DeleteTodaysGameAsync(DateTime date)
+    {
+        await todaysGameRepository.DeleteTodaysGameAsync(date);
+        await unitOfWork.SaveChangesAsync();
+    }
 
+    public async Task<IEnumerable<TodaysGame?>> GetGamesAsync(DateTime date)
+    {
+        return await todaysGameRepository.GetGamesAsync(date);
+    }
 
     public async Task<TodaysGame> GetTodaysGame(DateTime date)
     {

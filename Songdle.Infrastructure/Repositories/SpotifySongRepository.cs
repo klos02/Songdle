@@ -99,7 +99,9 @@ public class SpotifySongRepository(SpotifyAuthService spotifyAuthService, HttpCl
         if (response?.tracks?.items == null)
             return [];
 
-        return response.tracks.items.Select(t =>
+        return response.tracks.items.GroupBy(t => new { Title = t.name, Artist = t.artists.FirstOrDefault()?.name ?? "Unknown Artist" })
+        .Select(g => g.OrderByDescending(t => t.album.album_type == "album").First())
+        .Select(t =>
         {
             var mainArtist = t.artists.FirstOrDefault()?.name ?? "Unknown Artist";
             var feats = t.artists.Count > 1 ? t.artists?.Skip(1).Select(a => a.name).ToList() : new List<string>();

@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Songdle.Application.DTOs
 @using Songdle.Application.Interfaces
+@using Songdle.Infrastructure.Migrations
 
 @rendermode InteractiveServer
 @inject ISongProcessingService SongProcessingService
@@ -11,6 +12,12 @@
 
 <PageTitle>Admin Panel</PageTitle>
 
+<h3>Wybierz datę</h3>
+<div class="input-group mb-3">
+    <input type="date" class="form-control" @bind="selectedDate" />
+    
+   
+</div>
 <h3>Wyszukaj piosenkę</h3>
 <div class="input-group mb-3">
     <input type="text" class="form-control" placeholder="Wpisz tytuł lub wykonawcę..." @bind="searchQuery"
@@ -47,6 +54,16 @@ else if (!string.IsNullOrWhiteSpace(searchQuery) && !isLoading)
     <p>Brak wyników.</p>
 }
 
+@if (todaysGames != null && todaysGames.Any()){
+    foreach(var game in todaysGames){
+        <li class="mb-2">
+            @game.Date ---> @game.SpotifySongId
+        </li>
+ 
+    }
+    
+}
+
 
 
 
@@ -54,9 +71,18 @@ else if (!string.IsNullOrWhiteSpace(searchQuery) && !isLoading)
 
 @code {
     private IEnumerable<SongDto> songs = new List<SongDto>();
+    private IEnumerable<TodaysGameDto?> todaysGames = new List<TodaysGameDto?>();
     private bool isLoading = false;
+    
 
     private string searchQuery = "";
+    private DateTime selectedDate = DateTime.UtcNow.Date;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetGames();
+    }
 
 
     private async Task SearchSongs()
@@ -82,12 +108,21 @@ else if (!string.IsNullOrWhiteSpace(searchQuery) && !isLoading)
         }
     }
 
+    private async Task<bool> IsTodaysGameSet()
+    {
+        return await TodaysGameProcessingService.IsSongOfTheDaySetAsync(selectedDate);
+    }
+
     private async Task SetTodaysGame(string songId)
     {
         try
         {
             isLoading = true;
-            await TodaysGameProcessingService.SetTodaysGameAsync(DateTime.UtcNow.Date, songId);
+            if (await IsTodaysGameSet())
+            {
+                await TodaysGameProcessingService.DeleteTodaysGameAsync(selectedDate);
+            }
+            await TodaysGameProcessingService.SetTodaysGameAsync(selectedDate, songId);
         }
         catch (Exception ex)
         {
@@ -97,6 +132,10 @@ else if (!string.IsNullOrWhiteSpace(searchQuery) && !isLoading)
         {
             isLoading = false;
         }
+    }
+
+    private async Task GetGames(){
+        todaysGames = await  TodaysGameProcessingService.GetGamesAsync(DateTime.UtcNow.Date);
     }
 
 

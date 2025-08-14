@@ -8,6 +8,19 @@ namespace Songdle.Infrastructure.Repositories;
 
 public class TodaysGameRepository(AppDbContext context) : ITodaysGameRepository
 {
+    public async Task DeleteTodaysGameAsync(DateTime date)
+    {
+        await context.Games
+            .Where(g => g.Date.Date == date.Date)
+            .ExecuteDeleteAsync();
+    }
+
+    public async Task<IEnumerable<TodaysGame?>> GetGamesAsync(DateTime date)
+    {
+        return await context.Games.Where(g => g.Date.Date >= date.Date.AddDays(-1) && g.Date.Date <= date.Date.AddDays(6)).ToListAsync();
+            
+    }
+
     public async Task<TodaysGame?> GetTodaysGameAsync(DateTime date)
     {
         return await context.Games
@@ -18,4 +31,5 @@ public class TodaysGameRepository(AppDbContext context) : ITodaysGameRepository
     {
         await context.Games.AddAsync(todaysGame);
     }
+    
 }
