@@ -7,6 +7,21 @@ namespace Songdle.Application.Services;
 
 public class TodaysGameProcessingService(ITodaysGameHandler todaysGameHandler, ISongHandler songHandler) : ITodaysGameProcessingService
 {
+    public async Task DeleteTodaysGameAsync(DateTime date)
+    {
+        await todaysGameHandler.DeleteTodaysGameAsync(date);
+    }
+
+    public async Task<IEnumerable<TodaysGameDto?>> GetGamesAsync(DateTime date)
+    {
+        var games = await todaysGameHandler.GetGamesAsync(date);
+        return games.Select(game => new TodaysGameDto
+        {
+            SpotifySongId = game.SpotifySongId,
+            Date = game.Date
+        });
+    }
+
     public async Task<TodaysGameDto?> GetTodaysGameAsync(DateTime date)
     {
         var game = await todaysGameHandler.GetTodaysGame(date);

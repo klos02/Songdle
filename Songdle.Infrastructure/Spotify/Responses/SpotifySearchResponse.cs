@@ -36,6 +36,7 @@ public class Album
     public string name { get; set; }
     public string release_date { get; set; }
     public List<Image> images { get; set; }
+    public string album_type { get; set; }
 }
 
 public class Image
