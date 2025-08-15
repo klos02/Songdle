@@ -27,7 +27,7 @@ public class TodaysGameHandler(ITodaysGameRepository todaysGameRepository, IUnit
     public async Task<bool> IsSongOfTheDaySetAsync(DateTime date)
     {
         var todaysGame = await todaysGameRepository.GetTodaysGameAsync(date);
-        return todaysGame.SpotifySongId != null;
+        return todaysGame?.SpotifySongId != null;
         
     }
 
