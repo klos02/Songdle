@@ -104,7 +104,26 @@
                                 <div class="song-info">
                                     <div class="song-header">
                                         <div class="song-title @GetAccuracyClass(check.TitleCheck)">
-                                            @result.Title
+                                            @if (check.TitleCheck == 2)
+                                            {
+                                                var titleWords = SplitTitleIntoWords(result.Title);
+                                                @foreach (var item in titleWords.Select((word, idx) => new { word, idx }))
+                                                {
+                                                    if (check.TitleCheckIndexes.Contains(item.idx))
+                                                    {
+                                                        <span class="highlight-word">@item.word</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@item.word</span>
+                                                    }
+                                                    <span class="word-separator">&nbsp;</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @result.Title
+                                            }
                                         </div>
                                         @if (isCorrect && isLatest)
                                         {
@@ -274,4 +293,11 @@
         2 => " ↓", 
         _ => ""
     };
+
+    private List<string> SplitTitleIntoWords(string title)
+    {
+        return title.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(word => word.Trim())
+                    .ToList();
+    }
 }
