@@ -511,3 +511,10 @@
     }
 }
 
+.highlight-word {
+    color:#166534;
+    font-weight: bold;
+    padding: 0 2px;
+    border-radius: 4px;
+}
+

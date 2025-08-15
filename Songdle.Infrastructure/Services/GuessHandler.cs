@@ -1,4 +1,5 @@
 using System;
+using System.Text.RegularExpressions;
 using Songdle.Application.DTOs;
 using Songdle.Application.Interfaces;
 
@@ -19,11 +20,13 @@ public class GuessHandler(ISongHandler songHandler) : IGuessHandler
         Console.WriteLine($"Sprawdzanie odpowiedzi: {answer.Title} - {answer.Artist} (ID: {todaysGame.SpotifySongId})");
         bool titleCheck = string.Equals(answer.Title, songOfTheDay.Title, StringComparison.OrdinalIgnoreCase);
         bool containsAny = false;
+        List<int> matching = [];
 
         if (!titleCheck)
         {
-            var titleWords = answer.Title.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            containsAny = titleWords.Any(word => songOfTheDay.Title.Contains(word, StringComparison.OrdinalIgnoreCase));
+            matching = GetMatchingIndexes(answer.Title, songOfTheDay.Title);
+            containsAny = matching.Count > 0;
+
         }
 
         bool featsCheck = answer.Feats.OrderBy(x => x).SequenceEqual(songOfTheDay.Feats?.OrderBy(x => x) ?? Enumerable.Empty<string>());
@@ -38,6 +41,7 @@ public class GuessHandler(ISongHandler songHandler) : IGuessHandler
         var answerCheck = new AnswerCheckDto
         {
             TitleCheck = titleCheck ? 1 : containsAny ? 2 : 0,
+            TitleCheckIndexes = containsAny ? matching : [],
             ArtistCheck = string.Equals(answer.Artist, songOfTheDay?.Artist, StringComparison.OrdinalIgnoreCase),
             FeatsCheck = featsCheck ? 1 : anyMatchingFeats ? 2 : 0,
             AlbumCheck = string.Equals(answer.Album, songOfTheDay?.Album, StringComparison.OrdinalIgnoreCase),
@@ -47,5 +51,24 @@ public class GuessHandler(ISongHandler songHandler) : IGuessHandler
         };
 
         return answerCheck;
+    }
+
+    private List<int> GetMatchingIndexes(string guessTitle, string targetTitle)
+    {
+        var guessedWords = guessTitle
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .Select((word, index) => new { Word = word.ToLowerInvariant(), Index = index });
+
+        var targetWords = targetTitle
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .Select(word => word.ToLowerInvariant())
+        .ToHashSet();
+
+        var matchingIndexes = guessedWords
+        .Where(g => targetWords.Contains(g.Word))
+        .Select(g => g.Index)
+        .ToList();
+
+        return matchingIndexes;
     }
 }
