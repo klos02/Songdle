@@ -11,4 +11,5 @@ public class AnswerCheckDto
     public bool AlbumCheck { get; set; }
     public int ReleaseDateCheck { get; set; }
     public int? DurationCheck { get; set; }
+    public int PopularityCheck { get; set; }
 }

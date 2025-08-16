@@ -14,6 +14,7 @@ public class SongDto
     public string Genre { get; set; }
     public string? LyricsFragment { get; set; } = null!;
     public string Country { get; set; } = null!;
-    public string? ImageUrl { get; set; } 
+    public string? ImageUrl { get; set; }
     public string? AudioPreviewUrl { get; set; }
+    public int Popularity { get; set; } = 0;
 }

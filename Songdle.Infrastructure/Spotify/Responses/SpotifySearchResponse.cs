@@ -24,6 +24,7 @@ public class TrackItem
     public List<Artist> artists { get; set; }
     public Album album { get; set; }
     public string preview_url { get; set; }
+    public int popularity { get; set; }
 }
 
 public class Artist

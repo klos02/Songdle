@@ -143,12 +143,12 @@
                                             <span class="attr-value">@result.Album</span>
                                         </div>
 
-                                        <div class="attribute @GetDateClass(check.ReleaseDateCheck)">
+                                        <div class="attribute @GetIntClass(check.ReleaseDateCheck)">
                                             <span class="attr-icon">📅</span>
                                             <span class="attr-label">Release:</span>
                                             <span class="attr-value">
                                                 @result.ReleaseDate.ToString("dd.MM.yyyy")
-                                                @GetDateArrow(check.ReleaseDateCheck)
+                                                @GetIntArrow(check.ReleaseDateCheck)
                                             </span>
                                         </div>
 
@@ -156,6 +156,15 @@
                                             <span class="attr-icon">🤝</span>
                                             <span class="attr-label">Feats:</span>
                                             <span class="attr-value">@(result.Feats.Any() ? string.Join(", ", result.Feats) : "None")</span>
+                                        </div>
+
+                                        <div class="attribute @GetIntClass(check.PopularityCheck)">
+                                            <span class="attr-icon">🌟</span>
+                                            <span class="attr-label">Popularity (0-100):</span>
+                                            <span class="attr-value">
+                                                @result.Popularity
+                                                @GetIntArrow(check.PopularityCheck)
+                                            </span>
                                         </div>
                                     </div>
                                 </div>

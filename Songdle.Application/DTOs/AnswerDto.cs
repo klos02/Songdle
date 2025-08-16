@@ -12,5 +12,6 @@ public class AnswerDto
     public string? Album { get; set; }
     public DateTime ReleaseDate { get; set; }
     public int? Duration { get; set; }
+    public int Popularity { get; set; } = 0;
     
 }

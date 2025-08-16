@@ -103,11 +103,11 @@ public partial class SongdleMainComponent(ISongProcessingService SongProcessingS
 
     private string GetBoolClass(bool isCorrect) => isCorrect ? "correct" : "incorrect";
 
-    private string GetDateClass(int check) => check switch
+    private string GetIntClass(int check) => check switch
     {
         1 => "correct",
-        0 or 2 => "partial",
-        _ => "incorrect"
+        0 or 2 => "incorrect",
+        _ => "partial"
     };
 
     private string GetFeatsClass(int check) => check switch
@@ -117,10 +117,10 @@ public partial class SongdleMainComponent(ISongProcessingService SongProcessingS
         _ => "incorrect"
     };
 
-    private string GetDateArrow(int check) => check switch
+    private string GetIntArrow(int check) => check switch
     {
-        0 => " ↑",
-        2 => " ↓", 
+        0 => " ⬆️",
+        2 => " ⬇️", 
         _ => ""
     };
 
