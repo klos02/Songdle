@@ -1,9 +1,4 @@
 ﻿@page "/"
-@using Songdle.Application.DTOs
-@using Songdle.Application.Interfaces
-@inject ISongProcessingService SongProcessingService
-@inject ITodaysGameProcessingService TodaysGameProcessingService
-@inject IGuessProcessingService GuessProcessingService
 
 @rendermode InteractiveServer
 <PageTitle>Songdle - Daily Music Guessing Game</PageTitle>
@@ -26,12 +21,8 @@
         <div class="input-section">
             <div class="search-container">
                 <div class="search-input-wrapper">
-                    <input type="text" 
-                           class="search-input" 
-                           placeholder="Type song title..." 
-                           @bind="guessInput"
-                           @oninput="OnInputChanged"
-                           disabled="@isCorrect" />
+                    <input type="text" class="search-input" placeholder="Type song title..." @bind="guessInput"
+                        @oninput="OnInputChanged" disabled="@isCorrect" />
                     <div class="search-icon">🔍</div>
                 </div>
 
@@ -50,9 +41,8 @@
                     </div>
                 }
 
-                <button class="guess-button @(isSongSelected && !isCorrect ? "active" : "")" 
-                        @onclick="SubmitGuess" 
-                        disabled="@(!isSongSelected || isCorrect)">
+                <button class="guess-button @(isSongSelected && !isCorrect ? "active" : "")" @onclick="SubmitGuess"
+                    disabled="@(!isSongSelected || isCorrect)">
                     <span class="button-text">Make Guess</span>
                     <span class="button-icon">🎯</span>
                 </button>
@@ -66,21 +56,21 @@
                     <div class="victory-icon">🎉</div>
                     <div class="victory-text">
                         <h2>Congratulations!</h2>
-                        
+
                         <p>You guessed today's song in @guessResults.Count @(guessResults.Count == 1 ? "try" : "tries")!</p>
                     </div>
                 </div>
             </div>
         }
 
-      
+
 
         <!-- Results Feed -->
         @if (guessResults.Any())
         {
             <div class="results-section">
                 <h3 class="results-title">Your Guesses</h3>
-                
+
                 <div class="guess-feed">
                     @for (int i = 0; i < guessResults.Count; i++)
                     {
@@ -90,13 +80,12 @@
                         var isLatest = i == 0;
 
                         <div class="guess-row @(isLatest ? "latest-guess" : "")">
-                            
-                            
+
+
                             <div class="guess-card">
                                 <!-- Album Cover -->
                                 <div class="album-cover">
-                                    <img src="@result.ImageUrl" alt="@result.Title cover" 
-                                         onerror="this.style.display='none'" />
+                                    <img src="@result.ImageUrl" alt="@result.Title cover" onerror="this.style.display='none'" />
                                     <div class="cover-placeholder">🎵</div>
                                 </div>
 
@@ -148,156 +137,48 @@
                                             <span class="attr-value">@result.Album</span>
                                         </div>
 
-                                        <div class="attribute @GetDateClass(check.ReleaseDateCheck)">
+                                        <div class="attribute @GetIntClass(check.ReleaseDateCheck)">
                                             <span class="attr-icon">📅</span>
                                             <span class="attr-label">Release:</span>
                                             <span class="attr-value">
                                                 @result.ReleaseDate.ToString("dd.MM.yyyy")
-                                                @GetDateArrow(check.ReleaseDateCheck)
+                                                @GetIntArrow(check.ReleaseDateCheck)
                                             </span>
                                         </div>
 
                                         <div class="attribute @GetFeatsClass(check.FeatsCheck)">
                                             <span class="attr-icon">🤝</span>
                                             <span class="attr-label">Feats:</span>
-                                            <span class="attr-value">@(result.Feats.Any() ? string.Join(", ", result.Feats) : "None")</span>
-                                        </div>
+                                            <span class="attr-value">@(result.Feats.Any() ? string.Join(", ", result.Feats) :
+                                                                                        "None")</span>
+                                    </div>
+
+                                    <div class="attribute @GetIntClass(check.PopularityCheck)">
+                                        <span class="attr-icon">🌟</span>
+                                        <span class="attr-label">Popularity (0-100):</span>
+                                        <span class="attr-value">
+                                            @result.Popularity
+                                            @GetIntArrow(check.PopularityCheck)
+                                        </span>
+                                    </div>
+                                    <div class="attribute @GetIntClass(check.DurationCheck)">
+                                        <span class="attr-icon">🕖</span>
+                                        <span class="attr-label">Duration:</span>
+                                        <span class="attr-value">
+                                            @FormatDuration(result.Duration)
+                                            @GetIntArrow(check.DurationCheck)
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    }
-                </div>
+                    </div>
+                }
             </div>
-        }
+        </div>
+                }
 
         <!-- Victory Message -->
-        
+
     </main>
 </div>
-
-
-@code {
-    private string guessInput = "";
-    private SongDto? selectedSong = null;
-    private List<SongDto> suggestions = new();
-    private List<SongDto> guessResults = new();
-    private List<AnswerCheckDto> answerResults = new();
-    private TodaysGameDto todaysGame;
-    private string? previewUrl = "";
-    private bool isCorrect = false;
-    private bool isLoadingGame = false;
-
-    private bool isSongSelected => selectedSong != null;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await GetTodaysGame();
-    }
-
-    private async Task GetTodaysGame()
-    {
-        try
-        {
-            isLoadingGame = true;
-            todaysGame = await TodaysGameProcessingService.GetTodaysGameAsync(DateTime.UtcNow.Date);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error loading today's game: {ex.Message}");
-        }
-        finally
-        {
-            isLoadingGame = false;
-        }
-    }
-
-    private async Task OnInputChanged(ChangeEventArgs e)
-    {
-        guessInput = e.Value?.ToString() ?? "";
-        selectedSong = null;
-
-        if (guessInput.Length >= 2)
-        {
-            suggestions = (await SongProcessingService.SearchSongsByTitleAsync(guessInput)).ToList();
-        }
-        else
-        {
-            suggestions.Clear();
-        }
-    }
-
-    private void SelectSuggestion(SongDto song)
-    {
-        selectedSong = song;
-        guessInput = song.Title;
-        suggestions.Clear();
-    }
-
-    private async Task SubmitGuess()
-    {
-        if (selectedSong is not null)
-        {
-            var answerDto = await GuessProcessingService.GetAnswerDto(selectedSong);
-            var answerCheck = await GuessProcessingService.GuessSong(answerDto, todaysGame);
-            
-            guessResults.Insert(0, selectedSong);
-            answerResults.Insert(0, answerCheck);
-
-            isCorrect = selectedSong.SpotifyId == todaysGame.SpotifySongId;
-            
-                                    
-            
-                                        
-                                    
-
-            if (isCorrect)
-            {
-                previewUrl = selectedSong.AudioPreviewUrl;
-            }
-            Console.WriteLine($"Guessed song: {selectedSong.Title} - Correct: {isCorrect}");
-            Console.WriteLine($"Today's song: {todaysGame.SpotifySongId}");
-        }
-
-        guessInput = "";
-        selectedSong = null;
-    }
-
-    // Styling helper methods
-    private string GetAccuracyClass(int check) => check switch
-    {
-        1 => "correct",
-        2 => "partial", 
-        _ => "incorrect"
-    };
-
-    private string GetBoolClass(bool isCorrect) => isCorrect ? "correct" : "incorrect";
-
-    private string GetDateClass(int check) => check switch
-    {
-        1 => "correct",
-        0 or 2 => "partial",
-        _ => "incorrect"
-    };
-
-    private string GetFeatsClass(int check) => check switch
-    {
-        1 => "correct",
-        2 => "partial",
-        _ => "incorrect"
-    };
-
-    private string GetDateArrow(int check) => check switch
-    {
-        0 => " ↑",
-        2 => " ↓", 
-        _ => ""
-    };
-
-    private List<string> SplitTitleIntoWords(string title)
-    {
-        return title.Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(word => word.Trim())
-                    .ToList();
-    }
-}

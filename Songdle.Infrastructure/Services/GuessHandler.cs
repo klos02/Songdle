@@ -17,7 +17,8 @@ public class GuessHandler(ISongHandler songHandler) : IGuessHandler
             throw new ArgumentNullException("Answer or Today's Game cannot be null.");
         }
 
-        Console.WriteLine($"Sprawdzanie odpowiedzi: {answer.Title} - {answer.Artist} (ID: {todaysGame.SpotifySongId})");
+        Console.WriteLine($"Sprawdzanie odpowiedzi: {answer.Title} - {answer.Artist} Duration: {answer?.Duration} - Popularity: {answer?.Popularity}");
+        Console.WriteLine($"Piosenka dnia: {songOfTheDay?.Title} - {songOfTheDay?.Artist} (ID: {todaysGame.SpotifySongId}) - Duration: {songOfTheDay?.Duration} - Popularity: {songOfTheDay?.Popularity}");
         bool titleCheck = string.Equals(answer.Title, songOfTheDay.Title, StringComparison.OrdinalIgnoreCase);
         bool containsAny = false;
         List<int> matching = [];
@@ -47,7 +48,11 @@ public class GuessHandler(ISongHandler songHandler) : IGuessHandler
             AlbumCheck = string.Equals(answer.Album, songOfTheDay?.Album, StringComparison.OrdinalIgnoreCase),
             ReleaseDateCheck = answer.ReleaseDate.Date == songOfTheDay?.ReleaseDate.Date ? 1
                 : answer.ReleaseDate.Date < songOfTheDay?.ReleaseDate.Date ? 0 : 2,
+            PopularityCheck = answer.Popularity == songOfTheDay?.Popularity ? 1
+                : answer.Popularity < songOfTheDay?.Popularity ? 0 : 2,
             //ADD Duration check
+            DurationCheck = answer.Duration == songOfTheDay?.Duration ? 1
+                : answer.Duration < songOfTheDay?.Duration ? 0 : 2
         };
 
         return answerCheck;

@@ -73,7 +73,9 @@ public class SpotifySongRepository(SpotifyAuthService spotifyAuthService, HttpCl
             Album = track.album.name,
             ReleaseDate = releaseDate ?? DateTime.Now,
             AudioPreviewUrl = track.preview_url,
-            ImageUrl = track.album.images?.FirstOrDefault()?.url
+            ImageUrl = track.album.images?.FirstOrDefault()?.url,
+            Popularity = track.popularity,
+            Duration = track.duration_ms
         };
     }
 
@@ -129,7 +131,10 @@ public class SpotifySongRepository(SpotifyAuthService spotifyAuthService, HttpCl
                 Album = t.album.name,
                 ReleaseDate = releaseDate ?? DateTime.Now,
                 AudioPreviewUrl = t.preview_url,
-                ImageUrl = t.album.images?.FirstOrDefault()?.url
+                ImageUrl = t.album.images?.FirstOrDefault()?.url,
+                Popularity = t.popularity,
+                Duration = t.duration_ms
+
             };
 
         }
