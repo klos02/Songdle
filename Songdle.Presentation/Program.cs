@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Components;
 using Songdle.Infrastructure.Spotify;
 using Songdle.Infrastructure.Spotify.Options;
 
-//Env.Load();
+Env.Load();
 
 
 var builder = WebApplication.CreateBuilder(args);
