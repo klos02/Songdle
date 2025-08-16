@@ -25,6 +25,7 @@ public class TrackItem
     public Album album { get; set; }
     public string preview_url { get; set; }
     public int popularity { get; set; }
+    public int duration_ms { get; set; }
 }
 
 public class Artist

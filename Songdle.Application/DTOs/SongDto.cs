@@ -17,4 +17,5 @@ public class SongDto
     public string? ImageUrl { get; set; }
     public string? AudioPreviewUrl { get; set; }
     public int Popularity { get; set; } = 0;
+    public int Duration { get; set; } = 0;
 }

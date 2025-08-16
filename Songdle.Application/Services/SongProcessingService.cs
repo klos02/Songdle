@@ -112,7 +112,8 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
             ImageUrl = song.ImageUrl,
             AudioPreviewUrl = song.AudioPreviewUrl,
             Feats = song.Feats ?? [],
-            Popularity = song.Popularity
+            Popularity = song.Popularity,
+            Duration = song.Duration
 
         });
         

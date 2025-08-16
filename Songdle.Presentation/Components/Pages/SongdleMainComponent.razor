@@ -21,12 +21,8 @@
         <div class="input-section">
             <div class="search-container">
                 <div class="search-input-wrapper">
-                    <input type="text" 
-                           class="search-input" 
-                           placeholder="Type song title..." 
-                           @bind="guessInput"
-                           @oninput="OnInputChanged"
-                           disabled="@isCorrect" />
+                    <input type="text" class="search-input" placeholder="Type song title..." @bind="guessInput"
+                        @oninput="OnInputChanged" disabled="@isCorrect" />
                     <div class="search-icon">🔍</div>
                 </div>
 
@@ -45,9 +41,8 @@
                     </div>
                 }
 
-                <button class="guess-button @(isSongSelected && !isCorrect ? "active" : "")" 
-                        @onclick="SubmitGuess" 
-                        disabled="@(!isSongSelected || isCorrect)">
+                <button class="guess-button @(isSongSelected && !isCorrect ? "active" : "")" @onclick="SubmitGuess"
+                    disabled="@(!isSongSelected || isCorrect)">
                     <span class="button-text">Make Guess</span>
                     <span class="button-icon">🎯</span>
                 </button>
@@ -61,21 +56,21 @@
                     <div class="victory-icon">🎉</div>
                     <div class="victory-text">
                         <h2>Congratulations!</h2>
-                        
+
                         <p>You guessed today's song in @guessResults.Count @(guessResults.Count == 1 ? "try" : "tries")!</p>
                     </div>
                 </div>
             </div>
         }
 
-      
+
 
         <!-- Results Feed -->
         @if (guessResults.Any())
         {
             <div class="results-section">
                 <h3 class="results-title">Your Guesses</h3>
-                
+
                 <div class="guess-feed">
                     @for (int i = 0; i < guessResults.Count; i++)
                     {
@@ -85,13 +80,12 @@
                         var isLatest = i == 0;
 
                         <div class="guess-row @(isLatest ? "latest-guess" : "")">
-                            
-                            
+
+
                             <div class="guess-card">
                                 <!-- Album Cover -->
                                 <div class="album-cover">
-                                    <img src="@result.ImageUrl" alt="@result.Title cover" 
-                                         onerror="this.style.display='none'" />
+                                    <img src="@result.ImageUrl" alt="@result.Title cover" onerror="this.style.display='none'" />
                                     <div class="cover-placeholder">🎵</div>
                                 </div>
 
@@ -155,29 +149,36 @@
                                         <div class="attribute @GetFeatsClass(check.FeatsCheck)">
                                             <span class="attr-icon">🤝</span>
                                             <span class="attr-label">Feats:</span>
-                                            <span class="attr-value">@(result.Feats.Any() ? string.Join(", ", result.Feats) : "None")</span>
-                                        </div>
+                                            <span class="attr-value">@(result.Feats.Any() ? string.Join(", ", result.Feats) :
+                                                                                        "None")</span>
+                                    </div>
 
-                                        <div class="attribute @GetIntClass(check.PopularityCheck)">
-                                            <span class="attr-icon">🌟</span>
-                                            <span class="attr-label">Popularity (0-100):</span>
-                                            <span class="attr-value">
-                                                @result.Popularity
-                                                @GetIntArrow(check.PopularityCheck)
-                                            </span>
-                                        </div>
+                                    <div class="attribute @GetIntClass(check.PopularityCheck)">
+                                        <span class="attr-icon">🌟</span>
+                                        <span class="attr-label">Popularity (0-100):</span>
+                                        <span class="attr-value">
+                                            @result.Popularity
+                                            @GetIntArrow(check.PopularityCheck)
+                                        </span>
+                                    </div>
+                                    <div class="attribute @GetIntClass(check.DurationCheck)">
+                                        <span class="attr-icon">🕖</span>
+                                        <span class="attr-label">Duration:</span>
+                                        <span class="attr-value">
+                                            @FormatDuration(result.Duration)
+                                            @GetIntArrow(check.DurationCheck)
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    }
-                </div>
+                    </div>
+                }
             </div>
-        }
+        </div>
+                }
 
         <!-- Victory Message -->
-        
+
     </main>
 </div>
-
-

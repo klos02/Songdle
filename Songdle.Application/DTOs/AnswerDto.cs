@@ -11,7 +11,7 @@ public class AnswerDto
     public List<string> Feats { get; set; } = [];
     public string? Album { get; set; }
     public DateTime ReleaseDate { get; set; }
-    public int? Duration { get; set; }
+    public int Duration { get; set; } = 0;
     public int Popularity { get; set; } = 0;
     
 }

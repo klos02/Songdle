@@ -16,6 +16,7 @@ public class GuessProcessingService(IGuessHandler guessHandler) : IGuessProcessi
             ReleaseDate = song.ReleaseDate,
             Feats = song.Feats ?? [],
             Popularity = song.Popularity,
+            Duration = song.Duration,
 
         });
     }

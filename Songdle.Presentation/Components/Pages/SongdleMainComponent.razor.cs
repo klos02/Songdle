@@ -70,16 +70,16 @@ public partial class SongdleMainComponent(ISongProcessingService SongProcessingS
         {
             var answerDto = await GuessProcessingService.GetAnswerDto(selectedSong);
             var answerCheck = await GuessProcessingService.GuessSong(answerDto, todaysGame);
-        
+
             guessResults.Insert(0, selectedSong);
             answerResults.Insert(0, answerCheck);
 
             isCorrect = selectedSong.SpotifyId == todaysGame.SpotifySongId;
-        
-                                
-        
-                                    
-                                
+
+
+
+
+
 
             if (isCorrect)
             {
@@ -97,7 +97,7 @@ public partial class SongdleMainComponent(ISongProcessingService SongProcessingS
     private string GetAccuracyClass(int check) => check switch
     {
         1 => "correct",
-        2 => "partial", 
+        2 => "partial",
         _ => "incorrect"
     };
 
@@ -120,7 +120,7 @@ public partial class SongdleMainComponent(ISongProcessingService SongProcessingS
     private string GetIntArrow(int check) => check switch
     {
         0 => " ⬆️",
-        2 => " ⬇️", 
+        2 => " ⬇️",
         _ => ""
     };
 
@@ -130,4 +130,10 @@ public partial class SongdleMainComponent(ISongProcessingService SongProcessingS
                     .Select(word => word.Trim())
                     .ToList();
     }
+    
+    private string FormatDuration(int durationMs)
+{
+    var ts = TimeSpan.FromMilliseconds(durationMs);
+    return $"{(int)ts.TotalMinutes}:{ts.Seconds:D2}";
+}
 }
