@@ -1,30 +1,33 @@
 using System;
+using AutoMapper;
 using Songdle.Application.DTOs;
 using Songdle.Application.Interfaces;
 
 
 namespace Songdle.Application.Services;
 
-public class SongProcessingService(ISongHandler songHandler) : ISongProcessingService
+public class SongProcessingService(ISongHandler songHandler, IMapper mapper) : ISongProcessingService
 {
     public async Task<IEnumerable<SongDto>> GetAllSongsAsync()
     {
         var songs = await songHandler.GetAllSongsAsync();
-        return songs.Select(song => new SongDto
-        {
-            Id = song.Id,
-            Title = song.Title,
-            Artist = song.Artist,
-            Album = song.Album,
-            Genre = song.Genre,
-            ReleaseDate = song.ReleaseDate,
-            LyricsFragment = song.LyricsFragment,
-            Country = song.Country,
-            ImageUrl = song.ImageUrl,
-            AudioPreviewUrl = song.AudioPreviewUrl,
-            Feats = song.Feats ?? []
 
-        });
+        return mapper.Map<IEnumerable<SongDto>>(songs);
+        // return songs.Select(song => new SongDto
+        // {
+        //     Id = song.Id,
+        //     Title = song.Title,
+        //     Artist = song.Artist,
+        //     Album = song.Album,
+        //     Genre = song.Genre,
+        //     ReleaseDate = song.ReleaseDate,
+        //     LyricsFragment = song.LyricsFragment,
+        //     Country = song.Country,
+        //     ImageUrl = song.ImageUrl,
+        //     AudioPreviewUrl = song.AudioPreviewUrl,
+        //     Feats = song.Feats ?? []
+
+        // });
 
     }
 
@@ -37,20 +40,22 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
             {
                 return null;
             }
-            return new SongDto
-            {
-                Id = song.Id,
-                Title = song.Title,
-                Artist = song.Artist,
-                Album = song.Album,
-                Genre = song.Genre,
-                ReleaseDate = song.ReleaseDate,
-                LyricsFragment = song.LyricsFragment,
-                Country = song.Country,
-                ImageUrl = song.ImageUrl,
-                AudioPreviewUrl = song.AudioPreviewUrl,
-                Feats = song.Feats ?? []
-            };
+
+            return mapper.Map<SongDto>(song);
+            // return new SongDto
+            // {
+            //     Id = song.Id,
+            //     Title = song.Title,
+            //     Artist = song.Artist,
+            //     Album = song.Album,
+            //     Genre = song.Genre,
+            //     ReleaseDate = song.ReleaseDate,
+            //     LyricsFragment = song.LyricsFragment,
+            //     Country = song.Country,
+            //     ImageUrl = song.ImageUrl,
+            //     AudioPreviewUrl = song.AudioPreviewUrl,
+            //     Feats = song.Feats ?? []
+            // };
         }
         catch (KeyNotFoundException)
         {
@@ -74,20 +79,22 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
         {
             return null;
         }
-        return new SongDto
-        {
-            Id = song.Id,
-            Title = song.Title,
-            Artist = song.Artist,
-            Album = song.Album,
-            Genre = song.Genre,
-            ReleaseDate = song.ReleaseDate,
-            LyricsFragment = song.LyricsFragment,
-            Country = song.Country,
-            ImageUrl = song.ImageUrl,
-            AudioPreviewUrl = song.AudioPreviewUrl,
-            Feats = song.Feats ?? []
-        };
+
+        return mapper.Map<SongDto>(song);
+        // return new SongDto
+        // {
+        //     Id = song.Id,
+        //     Title = song.Title,
+        //     Artist = song.Artist,
+        //     Album = song.Album,
+        //     Genre = song.Genre,
+        //     ReleaseDate = song.ReleaseDate,
+        //     LyricsFragment = song.LyricsFragment,
+        //     Country = song.Country,
+        //     ImageUrl = song.ImageUrl,
+        //     AudioPreviewUrl = song.AudioPreviewUrl,
+        //     Feats = song.Feats ?? []
+        // };
 
     }
 
@@ -97,26 +104,27 @@ public class SongProcessingService(ISongHandler songHandler) : ISongProcessingSe
 
         var songs = await songHandler.SearchSongsByTitleAsync(partialTitle);
 
+        return mapper.Map<IEnumerable<SongDto>>(songs);
 
-        return songs.Select(song => new SongDto
-        {
-            Id = song.Id,
-            SpotifyId = song.SpotifyId,
-            Title = song.Title,
-            Artist = song.Artist,
-            Album = song.Album,
-            Genre = song.Genre,
-            ReleaseDate = song.ReleaseDate,
-            LyricsFragment = song.LyricsFragment,
-            Country = song.Country,
-            ImageUrl = song.ImageUrl,
-            AudioPreviewUrl = song.AudioPreviewUrl,
-            Feats = song.Feats ?? [],
-            Popularity = song.Popularity,
-            Duration = song.Duration
+        // return songs.Select(song => new SongDto
+        // {
+        //     Id = song.Id,
+        //     SpotifyId = song.SpotifyId,
+        //     Title = song.Title,
+        //     Artist = song.Artist,
+        //     Album = song.Album,
+        //     Genre = song.Genre,
+        //     ReleaseDate = song.ReleaseDate,
+        //     LyricsFragment = song.LyricsFragment,
+        //     Country = song.Country,
+        //     ImageUrl = song.ImageUrl,
+        //     AudioPreviewUrl = song.AudioPreviewUrl,
+        //     Feats = song.Feats ?? [],
+        //     Popularity = song.Popularity,
+        //     Duration = song.Duration
 
-        });
-        
-        
+        // });
+
+
     }
 }

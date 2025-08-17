@@ -1,11 +1,12 @@
 using System;
+using AutoMapper;
 using Songdle.Application.DTOs;
 using Songdle.Application.Interfaces;
 using Songdle.Domain.Entities;
 
 namespace Songdle.Application.Services;
 
-public class TodaysGameProcessingService(ITodaysGameHandler todaysGameHandler, ISongHandler songHandler) : ITodaysGameProcessingService
+public class TodaysGameProcessingService(ITodaysGameHandler todaysGameHandler, ISongHandler songHandler, IMapper mapper) : ITodaysGameProcessingService
 {
     public async Task DeleteTodaysGameAsync(DateTime date)
     {
@@ -15,11 +16,12 @@ public class TodaysGameProcessingService(ITodaysGameHandler todaysGameHandler, I
     public async Task<IEnumerable<TodaysGameDto?>> GetGamesAsync(DateTime date)
     {
         var games = await todaysGameHandler.GetGamesAsync(date);
-        return games.Select(game => new TodaysGameDto
-        {
-            SpotifySongId = game.SpotifySongId,
-            Date = game.Date
-        });
+        // return games.Select(game => new TodaysGameDto
+        // {
+        //     SpotifySongId = game.SpotifySongId,
+        //     Date = game.Date
+        // });
+        return mapper.Map<IEnumerable<TodaysGameDto?>>(games);
     }
 
     public async Task<TodaysGameDto?> GetTodaysGameAsync(DateTime date)
@@ -28,13 +30,15 @@ public class TodaysGameProcessingService(ITodaysGameHandler todaysGameHandler, I
         var songOfTheDay = songHandler.GetSongByIdAsync(game?.SpotifySongId);
 
         return game != null
-            ? new TodaysGameDto
-            {
-                Id = game.Id,
-                Date = game.Date,
-                SpotifySongId = game.SpotifySongId,
-            }
-            : null;
+            ?
+            mapper.Map<TodaysGameDto>(game) : null;
+        // new TodaysGameDto
+        // {
+        //     Id = game.Id,
+        //     Date = game.Date,
+        //     SpotifySongId = game.SpotifySongId,
+        // }
+        // : null;
     }
 
     public async Task<bool> IsSongOfTheDaySetAsync(DateTime date)
