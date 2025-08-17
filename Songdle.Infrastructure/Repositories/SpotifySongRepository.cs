@@ -56,13 +56,9 @@ public class SpotifySongRepository(SpotifyAuthService spotifyAuthService, HttpCl
         DateTime? releaseDate = null;
         if (!string.IsNullOrEmpty(track.album.release_date))
         {
-            // Spotify może zwrócić "YYYY", "YYYY-MM" lub "YYYY-MM-DD"
-            string[] formats = { "yyyy", "yyyy-MM", "yyyy-MM-dd" };
-            if (DateTime.TryParseExact(track.album.release_date, formats, null,
-                                       System.Globalization.DateTimeStyles.None, out var parsedDate))
-            {
-                releaseDate = parsedDate;
-            }
+            
+                releaseDate = ParseReleaseDate(track.album.release_date);
+            
         }
         return new Song
         {
@@ -101,8 +97,10 @@ public class SpotifySongRepository(SpotifyAuthService spotifyAuthService, HttpCl
         if (response?.tracks?.items == null)
             return [];
 
-        return response.tracks.items.GroupBy(t => new { Title = t.name, Artist = t.artists.FirstOrDefault()?.name ?? "Unknown Artist" })
-        .Select(g => g.OrderByDescending(t => t.album.album_type == "album").First())
+        return response.tracks.items
+        .Where(t => t.album.album_type == "album" || t.album.album_type == "single")
+        .GroupBy(t => new { Title = t.name, Artist = t.artists.FirstOrDefault()?.name ?? "Unknown Artist" })
+        .Select(g => g.OrderBy(t => ParseReleaseDate(t.album.release_date) ?? DateTime.MaxValue).FirstOrDefault())
         .Select(t =>
         {
             var mainArtist = t.artists.FirstOrDefault()?.name ?? "Unknown Artist";
@@ -111,14 +109,9 @@ public class SpotifySongRepository(SpotifyAuthService spotifyAuthService, HttpCl
             DateTime? releaseDate = null;
             if (!string.IsNullOrEmpty(t.album.release_date))
             {
-                // Spotify może zwrócić "YYYY", "YYYY-MM" lub "YYYY-MM-DD"
-                string[] formats = { "yyyy", "yyyy-MM", "yyyy-MM-dd" };
-                if (DateTime.TryParseExact(t.album.release_date, formats, null,
-                                           System.Globalization.DateTimeStyles.None, out var parsedDate))
-                {
-                    releaseDate = parsedDate;
-                }
+                releaseDate = ParseReleaseDate(t.album.release_date);
             }
+                
 
             Console.WriteLine($"Found song: {t.name} by {mainArtist} (ID: {t.id})");
 
@@ -145,5 +138,21 @@ public class SpotifySongRepository(SpotifyAuthService spotifyAuthService, HttpCl
     public Task<bool> SongExistsAsync(Song song)
     {
         throw new NotImplementedException();
+    }
+
+    private static DateTime? ParseReleaseDate(string releaseDate)
+    {
+        if (string.IsNullOrEmpty(releaseDate))
+            return null;
+
+        // Spotify może zwrócić "YYYY", "YYYY-MM" lub "YYYY-MM-DD"
+        string[] formats = { "yyyy", "yyyy-MM", "yyyy-MM-dd" };
+        if (DateTime.TryParseExact(releaseDate, formats, null,
+                                   System.Globalization.DateTimeStyles.None, out var parsedDate))
+        {
+            return parsedDate;
+        }
+
+        return null;
     }
 }
