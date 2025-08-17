@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Components;
 using Songdle.Infrastructure.Spotify;
 using Songdle.Infrastructure.Spotify.Options;
+using Songdle.Application.Mappings;
+using System.Reflection;
 
 Env.Load();
 
@@ -53,16 +55,16 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
     options.Cookie.SameSite = SameSiteMode.Lax;
 
-     options.Events.OnRedirectToLogin = context =>
-    {
-        var redirectUri = context.RedirectUri;
-        if (redirectUri.StartsWith("http://"))
-        {
-            redirectUri = redirectUri.Replace("http://", "https://");
-        }
-        context.Response.Redirect(redirectUri);
-        return Task.CompletedTask;
-    };
+    options.Events.OnRedirectToLogin = context =>
+   {
+       var redirectUri = context.RedirectUri;
+       if (redirectUri.StartsWith("http://"))
+       {
+           redirectUri = redirectUri.Replace("http://", "https://");
+       }
+       context.Response.Redirect(redirectUri);
+       return Task.CompletedTask;
+   };
 });
 
 builder.Services.Configure<SpotifyOptions>(options =>
@@ -85,6 +87,8 @@ builder.Services.AddScoped<ITodaysGameHandler, TodaysGameHandler>();
 builder.Services.AddScoped<IGuessHandler, GuessHandler>();
 builder.Services.AddScoped<IGuessProcessingService, GuessProcessingService>();
 builder.Services.AddScoped<IAdminConsole, AdminConsole>();
+
+builder.Services.AddAutoMapper(cfg => { }, typeof(SongProfile).Assembly, typeof(TodaysGameProfile).Assembly);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -124,13 +128,13 @@ if (!app.Environment.IsDevelopment())
 //     string adminEmail = Environment.GetEnvironmentVariable("ADMIN_USERNAME");
 //     string adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD");
 
-    
+
 //     if (!await roleManager.RoleExistsAsync("Admin"))
 //     {
 //         await roleManager.CreateAsync(new IdentityRole("Admin"));
 //     }
 
-    
+
 //     var adminUser = await userManager.FindByEmailAsync(adminEmail);
 //     if (adminUser == null)
 //     {
