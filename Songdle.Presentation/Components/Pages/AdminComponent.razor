@@ -52,7 +52,7 @@ else if (!string.IsNullOrWhiteSpace(searchQuery) && !isLoading)
 @if (todaysGames != null && todaysGames.Any()){
     foreach(var game in todaysGames){
         <li class="mb-2">
-            @game.Date ---> @game.SpotifySongId
+            @game.Date ---> @game.SpotifySongId ---> @game.Clue
         </li>
  
     }
