@@ -17,7 +17,7 @@ using System.Reflection;
 using Songdle.Infrastructure.AIClients.Options;
 using Songdle.Infrastructure.AIClients;
 
-Env.Load();
+//Env.Load();
 
 
 var builder = WebApplication.CreateBuilder(args);

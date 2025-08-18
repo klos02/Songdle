@@ -37,7 +37,7 @@ public class TodaysGameHandler(ITodaysGameRepository todaysGameRepository, IUnit
     public async Task SetTodaysGame(DateTime date, TodaysGame todaysGame, string artist, string title)
     {
         todaysGame.Clue = await GetClueForSongAsync(artist, title);
-        
+
     
         await todaysGameRepository.SetTodaysGameAsync(date, todaysGame);
         await unitOfWork.SaveChangesAsync();
@@ -47,6 +47,8 @@ public class TodaysGameHandler(ITodaysGameRepository todaysGameRepository, IUnit
     private async Task<string> GetClueForSongAsync(string artist, string title)
     {
         var prompt = SongCluePrompt.GetPrompt() + $"\nArtist: {artist}\nTitle: {title}\n";
+
+        Console.WriteLine($"Prompt for AI: {prompt}");
 
         var response = await geminiClient.GetResponseAsync(prompt) ?? throw new InvalidOperationException("Failed to generate clue for the song.");
         return geminiClient.GetResponseText(response);
