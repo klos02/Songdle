@@ -47,7 +47,7 @@ public class TodaysGameProcessingService(ITodaysGameHandler todaysGameHandler, I
         return await todaysGameHandler.IsSongOfTheDaySetAsync(date);
     }
 
-    public async Task SetTodaysGameAsync(DateTime date, string spoifySongId)
+    public async Task SetTodaysGameAsync(DateTime date, string spoifySongId, string artist, string title)
     {
         //var songOfTheDay = await songHandler.GetSongByIdAsync(spoifySongId);
         var game = new TodaysGame
@@ -56,7 +56,7 @@ public class TodaysGameProcessingService(ITodaysGameHandler todaysGameHandler, I
             SpotifySongId = spoifySongId,
 
         };
-        await todaysGameHandler.SetTodaysGame(date, game);
+        await todaysGameHandler.SetTodaysGame(date, game, artist, title);
     }
 
 }

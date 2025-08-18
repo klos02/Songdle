@@ -50,7 +50,7 @@ public partial class AdminComponent(ISongProcessingService SongProcessingService
         return await TodaysGameProcessingService.IsSongOfTheDaySetAsync(selectedDate);
     }
 
-    private async Task SetTodaysGame(string songId)
+    private async Task SetTodaysGame(SongDto song)
     {
         try
         {
@@ -59,7 +59,7 @@ public partial class AdminComponent(ISongProcessingService SongProcessingService
             {
                 await TodaysGameProcessingService.DeleteTodaysGameAsync(selectedDate);
             }
-            await TodaysGameProcessingService.SetTodaysGameAsync(selectedDate, songId);
+            await TodaysGameProcessingService.SetTodaysGameAsync(selectedDate, song.SpotifyId);
         }
         catch (Exception ex)
         {
