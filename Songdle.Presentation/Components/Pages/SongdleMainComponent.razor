@@ -8,6 +8,21 @@
     <!-- Main Game Area -->
     <main class="game-main">
         <!-- Input Section -->
+        <div class="clue-section">
+            <div class="clue-container">
+            <h2 class="clue-title">Today's Song Hint</h2>
+            <div class="clue-text">
+                @if (todaysGame != null)
+                {
+                    <p>@todaysGame.Clue</p>
+                }
+                else
+                {
+                    <p>Loading today's song clue...</p>
+                }
+            </div>
+            </div>
+        </div>
         <div class="input-section">
             <div class="search-container">
                 <div class="search-input-wrapper">

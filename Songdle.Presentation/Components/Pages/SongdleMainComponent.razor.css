@@ -55,6 +55,7 @@
     padding: 2rem 1rem;
 }
 
+
 .input-section {
     margin-bottom: 2rem;
 }
@@ -65,6 +66,46 @@
     padding: 1.5rem;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(20px);
+}
+
+.clue-section {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+.clue-container {
+    max-width: 900px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.clue-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.clue-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 0.5rem 0;
+    text-align: center;
+}
+
+.clue-text p {
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    line-height: 1.5;
+    text-align: center;
 }
 
 .search-input-wrapper {
@@ -485,6 +526,18 @@
     .game-stats {
         gap: 1rem;
     }
+
+    .clue-container {
+        padding: 0.75rem 1rem;
+    }
+
+    .clue-title {
+        font-size: 1.1rem;
+    }
+
+    .clue-text p {
+        font-size: 0.95rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -508,6 +561,18 @@
     
     .guess-number {
         align-self: flex-start;
+    }
+
+    .clue-container {
+        padding: 0.5rem 0.75rem;
+    }
+
+    .clue-title {
+        font-size: 1rem;
+    }
+
+    .clue-text p {
+        font-size: 0.9rem;
     }
 }
 
