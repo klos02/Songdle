@@ -14,6 +14,8 @@ using Songdle.Infrastructure.Spotify;
 using Songdle.Infrastructure.Spotify.Options;
 using Songdle.Application.Mappings;
 using System.Reflection;
+using Songdle.Infrastructure.AIClients.Options;
+using Songdle.Infrastructure.AIClients;
 
 Env.Load();
 
@@ -73,10 +75,18 @@ builder.Services.Configure<SpotifyOptions>(options =>
     options.ClientSecret = Environment.GetEnvironmentVariable("SPOTIFY_CLIENT_SECRET");
 });
 
+builder.Services.Configure<GeminiOptions>(options =>
+{
+    options.ApiKey = Environment.GetEnvironmentVariable("GeminiSettings_ApiKey");
+    options.Model = Environment.GetEnvironmentVariable("GeminiSettings_Model");
+});
+
 
 //builder.Services.AddScoped<ISongRepository, SongRepository>();
 builder.Services.AddScoped<SpotifyAuthService>();
 builder.Services.AddHttpClient<ISongRepository, SpotifySongRepository>();
+builder.Services.AddHttpClient<GeminiClient>();
+
 // SPOTIFY
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITodaysGameRepository, TodaysGameRepository>();

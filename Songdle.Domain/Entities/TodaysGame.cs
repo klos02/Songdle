@@ -7,4 +7,5 @@ public class TodaysGame
     public int Id { get; set; }
     public DateTime Date { get; set; }
     public string? SpotifySongId { get; set; } = null!;
+    public string? Clue { get; set; } = null!;
 }
