@@ -35,7 +35,7 @@
             {
                 <li class="mb-2">
                     <strong>@song.Title</strong> - @song.Artist (@song.Album)
-                    <button class="btn btn-sm btn-success ms-2" @onclick="() => SetTodaysGame(song.SpotifyId)">
+                    <button class="btn btn-sm btn-success ms-2" @onclick="() => SetTodaysGame(song)">
                         Ustaw jako dzisiejszą id:
                         @song.SpotifyId
                     </button>
@@ -52,7 +52,7 @@ else if (!string.IsNullOrWhiteSpace(searchQuery) && !isLoading)
 @if (todaysGames != null && todaysGames.Any()){
     foreach(var game in todaysGames){
         <li class="mb-2">
-            @game.Date ---> @game.SpotifySongId
+            @game.Date ---> @game.SpotifySongId ---> @game.Clue
         </li>
  
     }

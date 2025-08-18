@@ -1,11 +1,13 @@
 using System;
 using Songdle.Application.Interfaces;
+using Songdle.Application.Prompts;
 using Songdle.Domain.Entities;
 using Songdle.Domain.Interfaces;
+using Songdle.Infrastructure.AIClients;
 
 namespace Songdle.Infrastructure.Services;
 
-public class TodaysGameHandler(ITodaysGameRepository todaysGameRepository, IUnitOfWork unitOfWork) : ITodaysGameHandler
+public class TodaysGameHandler(ITodaysGameRepository todaysGameRepository, IUnitOfWork unitOfWork, GeminiClient geminiClient) : ITodaysGameHandler
 {
     public async Task DeleteTodaysGameAsync(DateTime date)
     {
@@ -28,14 +30,28 @@ public class TodaysGameHandler(ITodaysGameRepository todaysGameRepository, IUnit
     {
         var todaysGame = await todaysGameRepository.GetTodaysGameAsync(date);
         return todaysGame?.SpotifySongId != null;
-        
+
     }
 
 
-    public async Task SetTodaysGame(DateTime date, TodaysGame todaysGame)
+    public async Task SetTodaysGame(DateTime date, TodaysGame todaysGame, string artist, string title)
     {
+        todaysGame.Clue = await GetClueForSongAsync(artist, title);
+
+    
         await todaysGameRepository.SetTodaysGameAsync(date, todaysGame);
         await unitOfWork.SaveChangesAsync();
-           
+
+    }
+
+    private async Task<string> GetClueForSongAsync(string artist, string title)
+    {
+        var prompt = SongCluePrompt.GetPrompt() + $"\nArtist: {artist}\nTitle: {title}\n";
+
+        Console.WriteLine($"Prompt for AI: {prompt}");
+
+        var response = await geminiClient.GetResponseAsync(prompt) ?? throw new InvalidOperationException("Failed to generate clue for the song.");
+        return geminiClient.GetResponseText(response);
+        
     }
 }
