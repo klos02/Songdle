@@ -63,6 +63,10 @@
                         <h2>Congratulations!</h2>
 
                         <p>You guessed today's song in @guessResults.Count @(guessResults.Count == 1 ? "try" : "tries")!</p>
+
+                        <div class="next-game-mode-section">
+                            <button class="next-game-mode-button" @onclick="NavigateToAlbumComponent" >Next game: Guess album by the cover</button>
+                        </div>
                     </div>
                 </div>
             </div>

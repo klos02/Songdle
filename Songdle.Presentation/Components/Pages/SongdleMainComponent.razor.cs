@@ -5,7 +5,7 @@ using Songdle.Application.Interfaces;
 
 namespace Songdle.Presentation.Components.Pages;
 
-public partial class SongdleMainComponent(ISongProcessingService SongProcessingService, ITodaysGameProcessingService TodaysGameProcessingService, IGuessProcessingService GuessProcessingService) : ComponentBase
+public partial class SongdleMainComponent(ISongProcessingService SongProcessingService, ITodaysGameProcessingService TodaysGameProcessingService, IGuessProcessingService GuessProcessingService, NavigationManager navigationManager) : ComponentBase
 {
 
     private string guessInput = "";
@@ -136,4 +136,8 @@ public partial class SongdleMainComponent(ISongProcessingService SongProcessingS
     var ts = TimeSpan.FromMilliseconds(durationMs);
     return $"{(int)ts.TotalMinutes}:{ts.Seconds:D2}";
 }
+    private void NavigateToAlbumComponent()
+    {
+        navigationManager.NavigateTo("/album");
+    }
 }
