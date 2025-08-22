@@ -80,9 +80,33 @@
     
 
 }
+
+.change-mode-text {
+    
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
 .change-mode-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+@media (max-width: 768px) {
+    .change-mode-text {
+        display: none;
+    }
+
+    .change-mode-icon{
+        font-size: 1.5rem;
+    }
+    .change-mode-button {
+        padding: 8px;
+        border-radius: 20%;
+        width: 40px;
+        height: 40px;
+    }
+    
 }
 
 #blazor-error-ui {
