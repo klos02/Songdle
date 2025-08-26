@@ -146,7 +146,7 @@ public class SpotifySongRepository(SpotifyAuthService spotifyAuthService, HttpCl
             return null;
 
         // Spotify może zwrócić "YYYY", "YYYY-MM" lub "YYYY-MM-DD"
-        string[] formats = { "yyyy", "yyyy-MM", "yyyy-MM-dd" };
+        string[] formats = ["yyyy", "yyyy-MM", "yyyy-MM-dd"];
         if (DateTime.TryParseExact(releaseDate, formats, null,
                                    System.Globalization.DateTimeStyles.None, out var parsedDate))
         {
