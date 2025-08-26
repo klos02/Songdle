@@ -35,6 +35,7 @@ public class Artist
 
 public class Album
 {
+    public string id { get; set; }
     public string name { get; set; }
     public string release_date { get; set; }
     public List<Image> images { get; set; }
