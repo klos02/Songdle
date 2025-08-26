@@ -5,7 +5,7 @@ using Songdle.Domain.Interfaces;
 
 namespace Songdle.Infrastructure.Services;
 
-public class TodaysAlbumGameHandler(ITodaysAlbumGameRepository todaysAlbumGameRepository, IUnitOfWork unitOfWork) : ITodaysAlbumGameHandler
+public class TodaysAlbumGameHandler(ITodaysAlbumGameRepository todaysAlbumGameRepository, IUnitOfWork unitOfWork, IAlbumHandler albumHandler) : ITodaysAlbumGameHandler
 {
     public async Task DeleteTodaysAlbumGameAsync(DateTime date)
     {
@@ -31,6 +31,11 @@ public class TodaysAlbumGameHandler(ITodaysAlbumGameRepository todaysAlbumGameRe
 
     public async Task SetTodaysAlbumGameAsync(DateTime date, TodaysAlbumGame todaysAlbumGame)
     {
+        var album = await albumHandler.GetAlbumByIdAsync(todaysAlbumGame.SpotifyAlbumId) ?? throw new ArgumentException($"Album with ID {todaysAlbumGame.SpotifyAlbumId} not found.");
+
+        todaysAlbumGame.AlbumName = album.Name;
+        todaysAlbumGame.AlbumImageUrl = album.ImageUrl;
+
         await todaysAlbumGameRepository.SetTodaysAlbumGameAsync(todaysAlbumGame);
         await unitOfWork.SaveChangesAsync();
     }

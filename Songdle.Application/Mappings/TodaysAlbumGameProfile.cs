@@ -5,10 +5,10 @@ using Songdle.Domain.Entities;
 
 namespace Songdle.Application.Mappings;
 
-public class TodaysGameProfile : Profile
+public class TodaysAlbumGameProfile : Profile
 {
-    public TodaysGameProfile()
+    public TodaysAlbumGameProfile()
     {
-        CreateMap<TodaysAlbumGame, TodaysAlbumGameDto>();
+        CreateMap<TodaysAlbumGame, TodaysAlbumGameDto>().ReverseMap();
     }
 }
