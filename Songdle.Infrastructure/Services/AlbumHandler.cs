@@ -9,9 +9,30 @@ namespace Songdle.Infrastructure.Services;
 
 public class AlbumHandler(SpotifyAuthService spotifyAuthService, HttpClient httpClient) : IAlbumHandler
 {
-    public Task<AlbumDto> GetAlbumByIdAsync(string albumId)
+    public async Task<AlbumDto> GetAlbumByIdAsync(string albumId)
     {
-        throw new NotImplementedException();
+        var token = await spotifyAuthService.GetAccessTokenAsync();
+        httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        var url = $"https://api.spotify.com/v1/albums/{albumId}";
+
+        var response = await httpClient.GetFromJsonAsync<Album>(url) ?? throw new KeyNotFoundException("Album not found");
+
+        DateTime? releaseDate = null;
+        if (!string.IsNullOrEmpty(response.release_date))
+        {
+            releaseDate = ParseReleaseDate(response.release_date);
+        }
+
+        return new AlbumDto
+        {
+            Id = response.id,
+            Name = response.name,
+            ReleaseDate = releaseDate ?? DateTime.MinValue,
+            ImageUrl = response.images?.FirstOrDefault()?.url ?? string.Empty,
+            AlbumType = response.album_type
+        };
     }
 
     public async Task<IEnumerable<AlbumDto>> SearchAlbumsByNameAsync(string albumName)
