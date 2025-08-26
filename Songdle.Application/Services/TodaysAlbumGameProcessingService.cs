@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using Songdle.Application.DTOs;
 using Songdle.Application.Interfaces;
+using Songdle.Domain.Entities;
 
 namespace Songdle.Application.Services;
 
@@ -33,8 +34,12 @@ public class TodaysAlbumGameProcessingService(ITodaysAlbumGameHandler todaysAlbu
         return await todaysAlbumGameHandler.IsAlbumOfTheDaySetAsync(date);
     }
 
-    public Task SetTodaysAlbumGameAsync(DateTime date, string spotifyAlbumId)
+    public async Task SetTodaysAlbumGameAsync(DateTime date, string spotifyAlbumId)
     {
-        throw new NotImplementedException();
+        await todaysAlbumGameHandler.SetTodaysAlbumGameAsync(date, new TodaysAlbumGame
+        {
+            Date = date,
+            SpotifyAlbumId = spotifyAlbumId
+        });
     }
 }
