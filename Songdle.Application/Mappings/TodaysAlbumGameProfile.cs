@@ -9,6 +9,6 @@ public class TodaysAlbumGameProfile : Profile
 {
     public TodaysAlbumGameProfile()
     {
-        CreateMap<TodaysAlbumGame, TodaysAlbumGameDto>().ReverseMap();
+        CreateMap<TodaysAlbumGame, TodaysAlbumGameDto>();
     }
 }

@@ -15,7 +15,7 @@ public class TodaysGameProcessingService(ITodaysGameHandler todaysGameHandler, I
 
     public async Task<IEnumerable<TodaysGameDto?>> GetGamesAsync(DateTime date)
     {
-        var games = await todaysGameHandler.GetGamesAsync(date);
+        var games = await todaysGameHandler.GetGamesAsync(date) ?? [];
         // return games.Select(game => new TodaysGameDto
         // {
         //     SpotifySongId = game.SpotifySongId,

@@ -9,6 +9,6 @@ public class TodaysGameProfile : Profile
 {
     public TodaysGameProfile()
     {
-        CreateMap<TodaysAlbumGame, TodaysAlbumGameDto>();
+        CreateMap<TodaysGame, TodaysGameDto>();
     }
 }
