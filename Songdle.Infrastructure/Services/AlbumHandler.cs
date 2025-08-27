@@ -44,22 +44,22 @@ public class AlbumHandler(SpotifyAuthService spotifyAuthService, HttpClient http
         var url = $"https://api.spotify.com/v1/search?q={Uri.EscapeDataString(albumName)}&type=album&limit=10";
         var response = await httpClient.GetFromJsonAsync<SpotifyAlbumResponse>(url);
 
-        if (response == null || response.albums == null)
+        if (response.albums == null || response.albums.items == null)
             return [];
 
 
-        return response.albums.Select(album =>
+        return response.albums.items.Select(album =>
         {
             DateTime? releaseDate = null;
             if (!string.IsNullOrEmpty(album.release_date))
             {
                 releaseDate = ParseReleaseDate(album.release_date);
             }
-
+            Console.WriteLine($"Album: {album.name}, Release Date: {album.release_date}, Parsed Date: {releaseDate}");
             return new AlbumDto
             {
                 Id = album.id,
-                Name = albumName,
+                Name = album.name,
                 ReleaseDate = releaseDate ?? DateTime.MinValue,
                 ImageUrl = album.images?.FirstOrDefault()?.url ?? string.Empty,
             };

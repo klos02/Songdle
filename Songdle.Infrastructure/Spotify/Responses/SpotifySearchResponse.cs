@@ -9,7 +9,7 @@ public class SpotifySearchResponse
 
 public class SpotifyAlbumResponse
 {
-    public List<Album> albums { get; set; }
+    public Albums albums { get; set; }
 }
 
 public class SpotifyTrackResponse
@@ -20,6 +20,11 @@ public class SpotifyTrackResponse
 public class Tracks
 {
     public List<TrackItem> items { get; set; }
+}
+
+public class Albums
+{
+    public List<Album> items { get; set; }
 }
 
 public class TrackItem
