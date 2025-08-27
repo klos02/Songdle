@@ -28,7 +28,7 @@
             @foreach (var album in albums)
             {
                 <li class="mb-2">
-                    <strong>@album.Name</strong> - @album.ReleaseDate - @album.ImageUrl
+                    <strong>@album.Name</strong> - @album.ReleaseDate
                     <button class="btn btn-sm btn-success ms-2" @onclick="() => SetTodaysAlbumGame(album)">
                         Ustaw jako dzisiejszy album:
                         @album.Id

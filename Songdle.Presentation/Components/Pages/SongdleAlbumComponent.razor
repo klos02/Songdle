@@ -4,6 +4,101 @@
 
 <PageTitle>Songdle - Daily Music Guessing Game</PageTitle>
 
-<div class="game-main">
-    <h3>Album Page - Coming Soon!</h3>
-</div>
+<main class="game-main">
+
+    <div class="clue-section">
+        <div class="clue-container">
+            <h2 class="clue-title">Today's Album Cover</h2>
+            <div class="album-cover-container">
+                @if (todaysAlbumGame != null)
+                {
+                    <span class="album-cover">
+                    <img src="@todaysAlbumGame.AlbumImageUrl" alt="Album Cover"  />
+                    <div class="cover-overlay @(isCorrect ? "revealed" : "")">
+                        @for (int i = 0; i < 16; i++)
+                        {
+                            <div class="tile @(revealedTiles.Contains(i) ? "hidden" : "")"></div>
+                        }
+                    </div>
+                    </span>
+                }
+                else
+                {
+                    <p>Loading image</p>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="input-section">
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <input type="text" class="search-input" placeholder="Type album name..." @bind="guessInput"
+                    @oninput="OnInputChanged" disabled="@isCorrect" />
+                <div class="search-icon">🔍</div>
+            </div>
+
+            @if (suggestions.Any() && !isCorrect)
+            {
+                <div class="suggestions-dropdown">
+                    @foreach (var suggestion in suggestions)
+                    {
+                        <div class="suggestion-item" @onclick="() => SelectSuggestion(suggestion)">
+                            <div class="suggestion-content">
+                                <img src="@suggestion.ImageUrl" alt="Album Art" class="suggestion-image" />
+                                <div class="suggestion-title">@suggestion.Name</div>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <button class="guess-button @(isAlbumSelected && !isCorrect ? "active" : "")" @onclick="SubmitGuess"
+                disabled="@(!isAlbumSelected || isCorrect)">
+                <span class="button-text">Make Guess</span>
+                <span class="button-icon">🎯</span>
+            </button>
+        </div>
+    </div>
+
+    @if (isCorrect)
+    {
+        <div class="victory-section">
+            <div class="victory-card">
+                <div class="victory-icon">🎉</div>
+                <div class="victory-text">
+                    <h2>Congratulations!</h2>
+
+                    <p>You guessed today's album in @guessResults.Count @(guessResults.Count == 1 ? "try" : "tries")!</p>
+
+
+                </div>
+            </div>
+        </div>
+    }
+    @if (guessResults.Any())
+    {
+        <div class="results-section">
+            <h3 class="results-title">Your Guesses</h3>
+
+            <div class="guess-feed">
+                @for (int i = 0; i < guessResults.Count; i++)
+                {
+                    var result = guessResults[i];
+                    var isLatest = i == 0;
+                    var isCorrectGuess = isCorrect && isLatest;
+                    <div class="guess-row @(isLatest ? "latest-guess" : "")">
+                        <div class="guess-card @(isCorrectGuess ? "correct-guess" : "")">
+                            <div class="album-cover-result-container">
+                                <img src="@result.ImageUrl" alt="@result.Name cover" onerror="this.style.display='none'"
+                                    class="album-cover-result" />
+                                <span class="album-name">@result.Name</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+</main>
