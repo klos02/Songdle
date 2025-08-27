@@ -97,8 +97,13 @@ builder.Services.AddScoped<ITodaysGameHandler, TodaysGameHandler>();
 builder.Services.AddScoped<IGuessHandler, GuessHandler>();
 builder.Services.AddScoped<IGuessProcessingService, GuessProcessingService>();
 builder.Services.AddScoped<IAdminConsole, AdminConsole>();
+builder.Services.AddScoped<ITodaysAlbumGameHandler, TodaysAlbumGameHandler>();
+builder.Services.AddScoped<ITodaysAlbumGameProcessingService, TodaysAlbumGameProcessingService>();
+builder.Services.AddScoped<IAlbumHandler, AlbumHandler>();
+builder.Services.AddScoped<IAlbumProcessingService, AlbumProcessingService>();
+builder.Services.AddScoped<ITodaysAlbumGameRepository, TodaysAlbumGameRepository>();
 
-builder.Services.AddAutoMapper(cfg => { }, typeof(SongProfile).Assembly, typeof(TodaysGameProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => { }, typeof(SongProfile).Assembly, typeof(TodaysGameProfile).Assembly, typeof(TodaysAlbumGameProfile).Assembly);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();

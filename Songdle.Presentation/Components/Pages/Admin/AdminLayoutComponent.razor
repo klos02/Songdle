@@ -1,0 +1,27 @@
+﻿@inherits LayoutComponentBase
+@layout MainLayout
+
+@page "/admin"
+@using Microsoft.AspNetCore.Authorization
+@using Songdle.Presentation.Components.Layout
+@attribute [Authorize(Roles = "Admin")]
+
+
+
+
+<PageTitle>Admin Panel</PageTitle>
+
+
+<div class="admin-panel">
+    <main>
+        @Body
+    </main>
+</div>
+<div class="admin-bottom-nav-container">
+<nav class="admin-bottom-nav">
+        <NavLink href="/admin/song" class="nav-item">🎵 Songs</NavLink>
+        <NavLink href="/admin/album" class="nav-item">💿 Albums</NavLink>
+    </nav>
+    </div>
+
+

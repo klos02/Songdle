@@ -7,6 +7,11 @@ public class SpotifySearchResponse
     public Tracks tracks { get; set; }
 }
 
+public class SpotifyAlbumResponse
+{
+    public Albums albums { get; set; }
+}
+
 public class SpotifyTrackResponse
 {
     public TrackItem track { get; set; }
@@ -15,6 +20,11 @@ public class SpotifyTrackResponse
 public class Tracks
 {
     public List<TrackItem> items { get; set; }
+}
+
+public class Albums
+{
+    public List<Album> items { get; set; }
 }
 
 public class TrackItem
@@ -35,6 +45,7 @@ public class Artist
 
 public class Album
 {
+    public string id { get; set; }
     public string name { get; set; }
     public string release_date { get; set; }
     public List<Image> images { get; set; }

@@ -1,23 +1,17 @@
-﻿@page "/admin"
-@using Microsoft.AspNetCore.Authorization
-@attribute [Authorize(Roles = "Admin")]
-
+﻿@layout AdminLayoutComponent
+@page "/admin/album"
 @rendermode InteractiveServer
-
-
-<PageTitle>Admin Panel</PageTitle>
 
 <h3>Wybierz datę</h3>
 <div class="input-group mb-3">
     <input type="date" class="form-control" @bind="selectedDate" />
-    
-   
 </div>
-<h3>Wyszukaj piosenkę</h3>
+
+<h3>Wyszukaj album</h3>
 <div class="input-group mb-3">
     <input type="text" class="form-control" placeholder="Wpisz tytuł lub wykonawcę..." @bind="searchQuery"
         @bind:event="oninput" />
-    <button class="btn btn-primary" @onclick="SearchSongs" disabled="@isLoading">
+    <button class="btn btn-primary" @onclick="SearchAlbums" disabled="@isLoading">
         Szukaj
     </button>
 </div>
@@ -27,17 +21,17 @@
     <p>Wyszukiwanie...</p>
 }
 
-@if (songs != null && songs.Any())
+@if (albums != null && albums.Any())
 {
     <div style="height: 25vh; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 6px;">
         <ul class="list-unstyled">
-            @foreach (var song in songs)
+            @foreach (var album in albums)
             {
                 <li class="mb-2">
-                    <strong>@song.Title</strong> - @song.Artist (@song.Album)
-                    <button class="btn btn-sm btn-success ms-2" @onclick="() => SetTodaysGame(song)">
-                        Ustaw jako dzisiejszą id:
-                        @song.SpotifyId
+                    <strong>@album.Name</strong> - @album.ReleaseDate
+                    <button class="btn btn-sm btn-success ms-2" @onclick="() => SetTodaysAlbumGame(album)">
+                        Ustaw jako dzisiejszy album:
+                        @album.Id
                     </button>
                 </li>
             }
@@ -49,19 +43,12 @@ else if (!string.IsNullOrWhiteSpace(searchQuery) && !isLoading)
     <p>Brak wyników.</p>
 }
 
-@if (todaysGames != null && todaysGames.Any()){
-    foreach(var game in todaysGames){
+@if (games != null && games.Any()){
+    foreach(var game in games){
         <li class="mb-2">
-            @game.Date ---> @game.SpotifySongId ---> @game.Clue
+            @game.Date ---> @game.AlbumName ---> @game.SpotifyAlbumId
         </li>
  
     }
     
 }
-
-
-
-
-
-
-

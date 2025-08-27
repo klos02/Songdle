@@ -13,7 +13,7 @@
     text-align: center;
      position: relative;
     display: flex;
-    justify-content: center; /* środek */
+    justify-content: center;
     align-items: center;
     padding: 10px 20px;
     

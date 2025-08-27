@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 {
     public DbSet<Song> Songs { get; set; }
     public DbSet<TodaysGame> Games { get; set; }
+    public DbSet<TodaysAlbumGame> AlbumGames { get; set; }
 
 
     

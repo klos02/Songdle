@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Songdle.Application.DTOs;
 using Songdle.Application.Interfaces;
 
-namespace Songdle.Presentation.Components.Pages;
+namespace Songdle.Presentation.Components.Pages.Admin;
 
 public partial class AdminComponent(ISongProcessingService SongProcessingService, ITodaysGameProcessingService TodaysGameProcessingService) : ComponentBase
 {
