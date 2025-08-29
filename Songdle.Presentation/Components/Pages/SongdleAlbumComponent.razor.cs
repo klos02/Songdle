@@ -25,6 +25,7 @@ public partial class SongdleAlbumComponent(ITodaysAlbumGameProcessingService tod
     protected override async Task OnInitializedAsync()
     {
         await GetTodaysAlbumGame();
+        RevealNextTile();
     }
 
     private async Task GetTodaysAlbumGame()
